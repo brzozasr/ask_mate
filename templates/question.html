@@ -1,0 +1,21 @@
+{% extends 'pattern.html' %}
+
+{% block title %}List Questions{% endblock %}
+{% set date_sub = 1 %}
+{% set view = 2 %}
+{% set vote = 3 %}
+{% set title = 4 %}
+{%  set question = 5 %}
+{%  set image = 6 %}
+{% block content %}
+    <h2 class="title">Question View</h2>
+    {% for line in quest_answers %}
+        <div>
+            <p><small>Post date: {{ line[date_sub] }}, Viewed: {{ line[view] }}, Vote: {{ line[vote] }}</small></p>
+            <p><strong>{{ line[title] }}</strong><br>
+            {{ line[question] }}</p>
+            <p>{{ line[image] }}</p>
+            <hr>
+        </div>
+    {% endfor %}
+{% endblock %}

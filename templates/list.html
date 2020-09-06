@@ -1,0 +1,31 @@
+{% extends 'pattern.html' %}
+
+{% block title %}List Questions{% endblock %}
+{% set count = namespace(value=0) %}
+{% block content %}
+    <h2 class="title">List Questions</h2>
+    <table>
+        <thead>
+            <tr>
+                {% for header in header_table %}
+                <th>{{ header }}</th>
+                {%  endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in questions %}
+                <tr>
+                {% for cell in line %}
+                    {% if count.value == 5  %}
+                    <td class="txt_left">{{ cell }}<br><a class="btn_green" href="{{ url_for('question_view', question_id=cell[0]|int) }}">View question</a></td>
+                    {% else %}
+                    <td>{{ cell }}</td>
+                    {%  endif %}
+                    {% set count.value = count.value + 1 %}
+                {% endfor %}
+                {% set count.value = 0 %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
