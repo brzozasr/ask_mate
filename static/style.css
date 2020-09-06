@@ -118,6 +118,10 @@ h2.title {
   text-align: right;
 }
 
+.error {
+  color: red;
+}
+
 a:link.btn_red, a:visited.btn_red {
   background-color: #f44336;
   color: white;
