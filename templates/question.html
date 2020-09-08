@@ -1,21 +1,39 @@
 {% extends 'pattern.html' %}
 
 {% block title %}List Questions{% endblock %}
-{% set date_sub = 1 %}
-{% set view = 2 %}
-{% set vote = 3 %}
-{% set title = 4 %}
-{%  set question = 5 %}
-{%  set image = 6 %}
+{% set question = question[0] %}
+{% set q_id = question[0] %}
+{% set q_date_sub = 1 %}
+{% set q_view = 2 %}
+{% set q_vote = 3 %}
+{% set q_title = 4 %}
+{% set q_question = 5 %}
+{% set q_image = 6 %}
+{% set q_date = question[q_date_sub]|string -%}
+{% set a_id = 0 %}
+{% set a_date_sub = 1 %}
+{% set a_vote = 2 %}
+{% set a_answer = 4 %}
+{% set a_image = 5 %}
 {% block content %}
     <h2 class="title">Question View</h2>
-    {% for line in quest_answers %}
-        <div>
-            <p><small>Posted date: {{ line[date_sub] }}, Viewed: {{ line[view] }}, Vote: {{ line[vote] }}</small></p>
-            <p><strong>{{ line[title] }}</strong><br>
-            {{ line[question] }}</p>
-            <p>{{ line[image] }}</p>
-            <hr>
+    <p><a class="btn_green" href="{{ url_for('question_list') }}">Back to questions</a></p>
+        <div class="question">
+            <p><small>Posted date: {{ q_date[:19] }}, Viewed: {{ question[q_view] }}, Vote: {{ question[q_vote] }}</small></p>
+            <p><strong>{{ question[q_title] }}</strong><br>
+            {{ question[q_question] }}</p>
+            {% if question[q_image] != None -%}
+            <p>{{ question[q_image] }}</p>
+            {%- endif -%}
         </div>
-    {% endfor %}
+        {% for a_line in answer -%}
+        {% set a_date = a_line[a_date_sub]|string -%}
+        <div class="answer">
+            <p><small>Posted date: {{ a_date[:19] }}, Vote: {{ a_line[a_vote] }}</small></p>
+            <p>{{ a_line[a_answer] }}</p>
+            {% if a_line[a_image] != None -%}
+            <p>{{ a_line[a_image] }}</p>
+            {%- endif -%}
+        </div>
+        {% endfor %}
 {% endblock %}
