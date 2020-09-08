@@ -45,7 +45,7 @@ class DatabaseTools:
             self.__cursor.close()
             self.__connection.close()
         except Error as e:
-            print(f'There is a problem with closing data base: {e}')
+            print(f'There is a problem with closing database: {e}')
 
     def __create_db_tables(self):
         """Creating tables in ask_mate database - PostgreSQL.
