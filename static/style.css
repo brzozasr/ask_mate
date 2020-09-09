@@ -106,15 +106,18 @@ select {
   flex-direction: row
 }
 
-.vote_btn {
+a:link.vote, a:visited.vote {
   background-color: darkgreen;
-  width: 18px;
-  border: none;
   color: white;
+  width: 8px;
+  padding: 2px 8px;
+  text-align: center;
   text-decoration: none;
-  border-radius: 4px;
-  margin: 2px 2px;
-  cursor: pointer;
+  display: inline-block;
+}
+
+a:hover.vote, a:active.vote {
+  background-color: #009933;
 }
 
 h2.title {

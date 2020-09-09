@@ -26,12 +26,12 @@
             <p>{{ question[q_image] }}</p>
             {%- endif -%}
             <div class="vote_outer">
-                <div><form action="{{ url_for('question_view', question_id = q_id) }}" method="post">
-                    <input class="vote_btn" id="change_vote" name="change_vote" type="submit" value="+">
-                    <input class="vote_btn" id="change_vote" name="change_vote" type="submit" value="-">
-                </form></div>
+                <div>
+                    <a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=1) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=2) }}">-</a>
+                </div>
                 <div>&nbsp;&nbsp;<small>Vote: {{ question[q_vote] }}</small></div>
             </div>
+
         </div>
         {% for a_line in answer -%}
         {% set a_date = a_line[a_date_sub]|string -%}
