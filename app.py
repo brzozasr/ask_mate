@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from database_tools import *
 from query import *
 
@@ -19,12 +19,36 @@ def question_list():
 
 
 @app.route('/question/<int:question_id>')
-def question_view(question_id):
-    view_counter = db.execute_sql(f"SELECT view_number FROM question WHERE id = {question_id}")
-    db.execute_sql(f"UPDATE question SET view_number = {view_counter[0][0] + 1} WHERE id = {question_id}")
+@app.route('/question/<int:question_id>/<boolean>')
+def question_view(question_id, boolean="True"):
+    if eval(boolean):
+        view_counter = db.execute_sql(f"SELECT view_number FROM question WHERE id = {question_id}")
+        db.execute_sql(f"UPDATE question SET view_number = {view_counter[0][0] + 1} WHERE id = {question_id}")
+
+    # if request.method == 'POST':
+    #     count = 0
+    #     if request.form['change_vote'] == '+':
+    #         count = 1
+    #     elif request.form['change_vote'] == '-':
+    #         count = -1
+    #     vote_counter = db.execute_sql(f"SELECT vote_number FROM question WHERE id = {question_id}")
+    #     db.execute_sql(f"UPDATE question SET vote_number = {vote_counter[0][0] + count} WHERE id = {question_id}")
+
     question = db.execute_sql(f"SELECT * FROM question WHERE id = {question_id}")
     answer = db.execute_sql(f"SELECT * FROM answer WHERE question_id = {question_id}")
     return render_template('question.html', question=question, answer=answer)
+
+
+@app.route('/vote/<element>/<int:question_id>/<int:value>/')
+@app.route('/vote/<element>/<int:question_id>/<int:value>/<int:vote_id>')
+def vote(question_id, element, value, vote_id=None):
+    elements = ['question', 'answer', 'comment']
+    if value == 2:
+        value = -1
+    if element == elements[0]:
+        vote_counter = db.execute_sql(f"SELECT vote_number FROM question WHERE id = {question_id}")
+        db.execute_sql(f"UPDATE question SET vote_number = {vote_counter[0][0] + value} WHERE id = {question_id}")
+    return redirect(url_for('question_view', question_id=question_id, boolean="False"))
 
 
 @app.errorhandler(404)
