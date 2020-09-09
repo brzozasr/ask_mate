@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from database_tools import *
 from query import *
 
@@ -18,10 +18,21 @@ def question_list():
     return render_template('list.html', questions=questions_list, cols=cols_to_show)
 
 
-@app.route('/question/<int:question_id>')
+@app.route('/question/<int:question_id>', methods=['GET', 'POST'])
 def question_view(question_id):
-    view_counter = db.execute_sql(f"SELECT view_number FROM question WHERE id = {question_id}")
-    db.execute_sql(f"UPDATE question SET view_number = {view_counter[0][0] + 1} WHERE id = {question_id}")
+    if request.method == 'GET':
+        view_counter = db.execute_sql(f"SELECT view_number FROM question WHERE id = {question_id}")
+        db.execute_sql(f"UPDATE question SET view_number = {view_counter[0][0] + 1} WHERE id = {question_id}")
+
+    if request.method == 'POST':
+        count = 0
+        if request.form['change_vote'] == '+':
+            count = 1
+        elif request.form['change_vote'] == '-':
+            count = -1
+        vote_counter = db.execute_sql(f"SELECT vote_number FROM question WHERE id = {question_id}")
+        db.execute_sql(f"UPDATE question SET vote_number = {vote_counter[0][0] + count} WHERE id = {question_id}")
+
     question = db.execute_sql(f"SELECT * FROM question WHERE id = {question_id}")
     answer = db.execute_sql(f"SELECT * FROM answer WHERE question_id = {question_id}")
     return render_template('question.html', question=question, answer=answer)
