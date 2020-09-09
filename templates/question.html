@@ -19,12 +19,19 @@
     <h2 class="title">Question View</h2>
     <p><a class="btn_green" href="{{ url_for('question_list') }}">Back to questions</a></p>
         <div class="question">
-            <p><small>Posted date: {{ q_date[:19] }}, Viewed: {{ question[q_view] }}, Vote: {{ question[q_vote] }}</small></p>
+            <p><small>Posted date: {{ q_date[:19] }}, Viewed: {{ question[q_view] }}</small></p>
             <p><strong>{{ question[q_title] }}</strong><br>
             {{ question[q_question] }}</p>
             {% if question[q_image] != None -%}
             <p>{{ question[q_image] }}</p>
             {%- endif -%}
+            <div class="vote_outer">
+                <div>
+                    <a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=1) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=2) }}">-</a>
+                </div>
+                <div>&nbsp;&nbsp;<small>Vote: {{ question[q_vote] }}</small></div>
+            </div>
+
         </div>
         {% for a_line in answer -%}
         {% set a_date = a_line[a_date_sub]|string -%}

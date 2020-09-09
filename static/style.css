@@ -67,7 +67,7 @@ input[type=number] {
   box-sizing: border-box;
 }
 
-input[type=submit], input[type=button] {
+.btn {
   background-color: #0040ff;
   border: none;
   color: white;
@@ -98,6 +98,26 @@ select {
   border: 1px solid #0080ff;
   border-radius: 4px;
   background-color: white;
+}
+
+.vote_outer {
+  display:flex;
+  align-items: center;
+  flex-direction: row
+}
+
+a:link.vote, a:visited.vote {
+  background-color: darkgreen;
+  color: white;
+  width: 8px;
+  padding: 2px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+a:hover.vote, a:active.vote {
+  background-color: #009933;
 }
 
 h2.title {
