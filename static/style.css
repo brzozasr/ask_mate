@@ -37,6 +37,7 @@ form.center {
   max-width: 500px;
   margin: auto;
   background: #f2f2f2;
+  border-radius: 4px;
   padding: 10px;
   border: 1px solid #0080ff;
 }
@@ -67,7 +68,7 @@ input[type=number] {
   box-sizing: border-box;
 }
 
-.btn {
+input[type=submit].btn, input[type=button].btn {
   background-color: #0040ff;
   border: none;
   color: white;
