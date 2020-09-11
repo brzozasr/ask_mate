@@ -4,7 +4,7 @@
 {% block content %}
     <h2 class="title">List Questions</h2>
     <p><a class="btn_green" href="{{ url_for('add_question') }}">Add question</a></p>
-    <table>
+    <table class="center">
         <thead>
             <tr>
                 {% for name in cols.keys() -%}
@@ -18,7 +18,9 @@
                 {%- for name, no in cols.items() -%}
                     {%- if name == 'Date' %}
                     {% set date = line[no]|string -%}
-                    <td>{{ date[:19] }}</td>
+                    <td style="min-width: 90px">{{ date[:19] }}</td>
+                    {% elif name == 'Title'  -%}
+                    <td style="min-width: 150px" class="txt_left">{{ line[no] }}</td>
                     {% elif name == 'Question'  -%}
                     <td class="txt_left">{{ line[no] }}<br><a class="btn_green" href="{{ url_for('question_view', question_id=line[0]|int) }}">View question</a></td>
                     {% else -%}
