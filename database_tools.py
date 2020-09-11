@@ -17,9 +17,9 @@ class DatabaseTools:
         self.__cursor = None
         self.__connection = None
 
-    def execute_sql(self, query):
+    def execute_sql(self, query, data=None):
         self.__connect_db()
-        result = self.__execute_query(query)
+        result = self.__execute_query(query, data)
         self.__close_connection()
         return result
 
@@ -31,10 +31,11 @@ class DatabaseTools:
         except Error as e:
             print(f'There is a problem with connection: {e}')
 
-    def __execute_query(self, query):
+    def __execute_query(self, query, data=None):
         try:
-            self.__cursor.execute(query)
-            return self.__cursor.fetchall()
+            self.__cursor.execute(query, data)
+            if 'SELECT' in str(self.__cursor.query) or 'RETURNING' in str(self.__cursor.query):
+                return self.__cursor.fetchall()
         except (Error, OperationalError) as e:
             print(f'There is a problem with operation: {e}')
         finally:
