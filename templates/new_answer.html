@@ -1,0 +1,12 @@
+{% extends 'pattern.html' %}
+{% block title %}Add Answer{% endblock %}
+
+{% block content %}
+    <h2 class="title">Add Answer</h2>
+    <form class="center" action="{{ url_for('new_answer', question_id=question_id) }}" method="post">
+        <label for="answer">Answer:</label><br>
+        <textarea id="answer" name="answer" rows="4" cols="50" placeholder="Write an answer" required></textarea><br>
+        <br>
+        <input class="btn" type="submit" value="Add" name="sub_button"><a href="{{ url_for('question_view', question_id=question_id, boolean="False") }}"><input class="btn" type="button" value="Cancel"></a>
+    </form>
+{% endblock %}

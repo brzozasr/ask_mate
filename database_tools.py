@@ -34,7 +34,7 @@ class DatabaseTools:
     def __execute_query(self, query, data=None):
         try:
             self.__cursor.execute(query, data)
-            if 'SELECT' in str(self.__cursor.query) or 'RETURNING' in str(self.__cursor.query):
+            if 'SELECT' in str(self.__cursor.query).upper() or 'RETURNING' in str(self.__cursor.query).upper():
                 return self.__cursor.fetchall()
         except (Error, OperationalError) as e:
             print(f'There is a problem with operation: {e}')
