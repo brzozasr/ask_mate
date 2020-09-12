@@ -1,6 +1,6 @@
 {% extends 'pattern.html' %}
 
-{% block title %}List Questions{% endblock %}
+{% block title %}Questions View{% endblock %}
 {% set question = question[0] %}
 {% set q_id = question[0] %}
 {% set q_date_sub = 1 %}
@@ -17,7 +17,7 @@
 {% set a_image = 5 %}
 {% block content %}
     <h2 class="title">Question View</h2>
-    <p><a class="btn_green" href="{{ url_for('question_list') }}">Back to questions</a></p>
+    <p><a class="btn_green" href="{{ url_for('question_list') }}">&lt;&lt; Back to questions</a></p>
         <div class="question">
             <p><small>Posted date: {{ q_date[:19] }}, Viewed: {{ question[q_view] }}</small></p>
             <p><strong>{{ question[q_title] }}</strong><br>
@@ -30,6 +30,7 @@
                     <a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=1) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=2) }}">-</a>
                 </div>
                 <div>&nbsp;&nbsp;<small>Vote: {{ question[q_vote] }}</small></div>
+                <div><a class="add_answer" href="{{ url_for('new_answer', question_id=q_id) }}">+ Add answer</a></div>
             </div>
 
         </div>
