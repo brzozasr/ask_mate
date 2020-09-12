@@ -115,10 +115,50 @@ a:link.vote, a:visited.vote {
   text-align: center;
   text-decoration: none;
   display: inline-block;
+  border-radius: 4px;
 }
 
 a:hover.vote, a:active.vote {
   background-color: #009933;
+}
+
+a:link.add_answer, a:visited.add_answer {
+  background-color: darkgreen;
+  color: white;
+  padding: 2px 8px;
+  margin-left: 80px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+a:hover.add_answer, a:active.add_answer {
+  background-color: #009933;
+}
+
+a:link.sort, a:visited.sort {
+  color: aqua;
+  padding: 1px 2px;
+  text-align: center;
+  text-decoration: none;
+  display: inline;
+}
+
+a:hover.sort, a:active.sort {
+  color: #f44336;
+}
+
+a:link.sort_select, a:visited.sort_select {
+  color: #f44336;
+  padding: 1px 2px;
+  text-align: center;
+  text-decoration: none;
+  display: inline;
+}
+
+a:hover.sort_select, a:active.sort_select {
+  color: #f44336;
 }
 
 h2.title {
@@ -165,6 +205,7 @@ a:link.btn_red, a:visited.btn_red {
   text-align: center;
   text-decoration: none;
   display: inline-block;
+  border-radius: 4px;
 }
 
 a:hover.btn_red, a:active.btn_red {
@@ -178,6 +219,7 @@ a:link.btn_blue, a:visited.btn_blue {
   text-align: center;
   text-decoration: none;
   display: inline-block;
+  border-radius: 4px;
 }
 
 a:hover.btn_blue, a:active.btn_blue {
@@ -191,8 +233,26 @@ a:link.btn_green, a:visited.btn_green {
   text-align: center;
   text-decoration: none;
   display: inline-block;
+  border-radius: 4px;
 }
 
 a:hover.btn_green, a:active.btn_green {
     background-color: #009933;
+}
+
+a:link.btn_grey, a:visited.btn_grey {
+  background-color: #e6e6e6;
+  color: black;
+  width: 190px;
+  padding: 1px 1px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border: black solid 1px;
+  border-radius: 4px;
+}
+
+a:hover.btn_grey, a:active.btn_grey {
+  background-color: black;
+  color: white;
 }
