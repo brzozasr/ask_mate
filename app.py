@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
-from database_tools import *
-from query import *
 
+from database_tools import *
+from tools import *
 
 app = Flask(__name__)
 
@@ -13,20 +13,26 @@ def index():
 
 @app.route('/list')
 def question_list():
-    questions_list = db.execute_sql(query.question_select_all_desc_by_date)
     cols_to_show = {'Date': 1, 'View': 2, 'Vote': 3, 'Title': 4, 'Question': 5}
-    return render_template('list.html', questions=questions_list, cols=cols_to_show)
+    if (order_by := request.args.get('order_by')) is None:
+        order_by = 'date'
+    if (order_direction := request.args.get('order_direction')) is None:
+        order_direction = 'desc'
+    order_data = (order_by, order_direction)
+    sorting_query = get_sort_query(order_direction, order_by)
+    questions_list = db.execute_sql(sorting_query)
+    return render_template('list.html', questions=questions_list, cols=cols_to_show, order_data=order_data)
 
 
 @app.route('/question/<int:question_id>')
 @app.route('/question/<int:question_id>/<boolean>')
 def question_view(question_id, boolean="True"):
     if eval(boolean):
-        view_counter = db.execute_sql(f"SELECT view_number FROM question WHERE id = {question_id}")
-        db.execute_sql(f"UPDATE question SET view_number = {view_counter[0][0] + 1} WHERE id = {question_id}")
+        view_question = db.execute_sql(query.question_select_view_number_by_id, [question_id])
+        db.execute_sql(query.question_update_view_number_by_id, [view_question[0][0], question_id])
 
-    question = db.execute_sql(f"SELECT * FROM question WHERE id = {question_id}")
-    answer = db.execute_sql(f"SELECT * FROM answer WHERE question_id = {question_id}")
+    question = db.execute_sql(query.question_select_by_id, [question_id])
+    answer = db.execute_sql(query.answer_select_by_id, [question_id])
     return render_template('question.html', question=question, answer=answer)
 
 
@@ -38,8 +44,8 @@ def vote(question_id, element, value, vote_id=None):
         value = -1
 
     if element == elements['question']:
-        vote_counter = db.execute_sql(f"SELECT vote_number FROM question WHERE id = {question_id}")
-        db.execute_sql(f"UPDATE question SET vote_number = {vote_counter[0][0] + value} WHERE id = {question_id}")
+        vote_question = db.execute_sql(query.question_select_vote_number_by_id, [question_id])
+        db.execute_sql(query.question_update_vote_number_by_id, [vote_question[0][0], value, question_id])
     return redirect(url_for('question_view', question_id=question_id, boolean="False"))
 
 
@@ -48,10 +54,20 @@ def add_question():
     if request.method == 'POST':
         title = request.form['title']
         question = request.form['question']
-        db.execute_sql(f"""INSERT INTO question (title, message) VALUES (%s, %s)""", (title, question))
+        db.execute_sql(query.question_insert, [title, question])
         return redirect(url_for('question_list'))
     else:
         return render_template('add_question.html')
+
+
+@app.route('/question/<int:question_id>/new_answer', methods=['GET', 'POST'])
+def new_answer(question_id):
+    if request.method == 'POST':
+        answer = request.form['answer']
+        db.execute_sql(query.answer_insert, [question_id, answer])
+        return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+    else:
+        return render_template('new_answer.html', question_id=question_id)
 
 
 @app.errorhandler(404)
