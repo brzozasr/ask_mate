@@ -35,7 +35,10 @@ __query_all = {
     'question_insert':
         'INSERT INTO question (title, message) VALUES (%s, %s)',
     'answer_insert':
-        'INSERT INTO answer (question_id, message) VALUES (%s, %s)'
+        'INSERT INTO answer (question_id, message) VALUES (%s, %s)',
+    'question_delete':
+        'DELETE FROM question WHERE id = %s',
+
 }
 
 
