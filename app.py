@@ -75,6 +75,8 @@ def delete_question(question_id):
     db.execute_sql(query.question_delete, [question_id])
     return redirect(url_for('question_list'))
 
+@app.route('/')
+
 
 @app.route('/question/<int:question_id>/edit', methods=['GET', 'POST'])
 def edit_question(question_id, question=None):

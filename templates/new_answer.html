@@ -1,8 +1,8 @@
 {% extends 'pattern.html' %}
-{% block title %}Add Answer{% endblock %}
+{% block title %}Add an answer{% endblock %}
 
 {% block content %}
-    <h2 class="title">Add Answer</h2>
+    <h2 class="title">Add an answer</h2>
     <form class="center" action="{{ url_for('new_answer', question_id=question_id) }}" method="post">
         <label for="answer">Answer:</label><br>
         <textarea id="answer" name="answer" rows="4" cols="50" placeholder="Write an answer" required></textarea><br>
