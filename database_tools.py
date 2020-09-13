@@ -4,7 +4,7 @@ from psycopg2 import *
 class DatabaseTools:
     __config_db = {'db': 'ask_mate',
                    'user': 'postgres',
-                   'password': 'brzozasr',
+                   'password': '1234',
                    'host': 'localhost',
                    'port': '5432'}
 
