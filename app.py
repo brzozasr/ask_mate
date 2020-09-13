@@ -69,6 +69,10 @@ def new_answer(question_id):
     else:
         return render_template('new_answer.html', question_id=question_id)
 
+@app.route('/question/<int:question_id>/delete', methods=['POST'])
+def delete_question(question_id):
+    db.execute_sql(query.question_delete, [question_id])
+    return redirect(url_for('question_list'))
 
 <<<<<<< Updated upstream
 =======

@@ -1,3 +1,10 @@
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body {
     font-family: Helvetica, Arial, sans-serif;
 }
@@ -107,6 +114,10 @@ select {
   flex-direction: row
 }
 
+a, button {
+  font-size: 14px;
+}
+
 a:link.vote, a:visited.vote {
   background-color: darkgreen;
   color: white;
@@ -198,7 +209,7 @@ h2.title {
   margin: 15px 0 0 15px;
 }
 
-a:link.btn_red, a:visited.btn_red {
+a:link.btn_red, a:visited.btn_red, .btn_red {
   background-color: #f44336;
   color: white;
   padding: 4px 5px;
@@ -212,7 +223,7 @@ a:hover.btn_red, a:active.btn_red {
   background-color: red;
 }
 
-a:link.btn_blue, a:visited.btn_blue {
+a:link.btn_blue, a:visited.btn_blue, .btn_blue {
   background-color: #0146f3;
   color: white;
   padding: 4px 5px;
@@ -226,7 +237,7 @@ a:hover.btn_blue, a:active.btn_blue {
   background-color: #0000ff;
 }
 
-a:link.btn_green, a:visited.btn_green {
+a:link.btn_green, a:visited.btn_green, .btn_green {
   background-color: #20bd0a;
   color: white;
   padding: 4px 5px;
@@ -240,7 +251,7 @@ a:hover.btn_green, a:active.btn_green {
     background-color: #009933;
 }
 
-a:link.btn_grey, a:visited.btn_grey {
+a:link.btn_grey, a:visited.btn_grey, .btn_grey {
   background-color: #e6e6e6;
   color: black;
   width: 190px;
@@ -252,7 +263,7 @@ a:link.btn_grey, a:visited.btn_grey {
   border-radius: 4px;
 }
 
-a:hover.btn_grey, a:active.btn_grey {
+a:hover.btn_grey, a:active.btn_grey, *:hover.btn_grey {
   background-color: black;
   color: white;
 }
