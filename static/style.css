@@ -121,8 +121,8 @@ a, button {
 a:link.vote, a:visited.vote {
   background-color: darkgreen;
   color: white;
-  width: 8px;
-  padding: 2px 8px;
+  width: 16px;
+  padding: 2px 4px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -266,4 +266,8 @@ a:link.btn_grey, a:visited.btn_grey, .btn_grey {
 a:hover.btn_grey, a:active.btn_grey, *:hover.btn_grey {
   background-color: black;
   color: white;
+}
+
+a:link.btn_grey.half_size, a:visited.btn_grey.half_size, .btn_grey.half_size {
+  width:95px;
 }

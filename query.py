@@ -38,7 +38,8 @@ __query_all = {
         'INSERT INTO answer (question_id, message) VALUES (%s, %s)',
     'question_delete':
         'DELETE FROM question WHERE id = %s',
-
+    'question_update':
+        'UPDATE question SET title = %s, message = %s WHERE id = %s',
 }
 
 
