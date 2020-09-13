@@ -69,10 +69,24 @@ def new_answer(question_id):
     else:
         return render_template('new_answer.html', question_id=question_id)
 
+
 @app.route('/question/<int:question_id>/delete', methods=['POST'])
 def delete_question(question_id):
     db.execute_sql(query.question_delete, [question_id])
     return redirect(url_for('question_list'))
+
+
+@app.route('/question/<int:question_id>/edit', methods=['GET', 'POST'])
+def edit_question(question_id, question=None):
+    if request.method == 'POST':
+        title = request.form['title']
+        question = request.form['question']
+        db.execute_sql(query.question_update, [title, question, question_id])
+        return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+    else:
+        question = db.execute_sql(query.question_select_by_id, [question_id])[0]
+        return render_template('edit_question.html', question_id=question_id, question=question)
+
 
 @app.errorhandler(404)
 def page_not_found():
