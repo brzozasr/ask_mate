@@ -2,9 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for
 
 from database_tools import *
 from tools import *
+from upload_file import upload_file
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.register_blueprint(upload_file, url_prefix='/upload')
+
 
 @app.route('/')
 def index():

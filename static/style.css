@@ -1,6 +1,7 @@
 html {
   box-sizing: border-box;
 }
+
 *, *:before, *:after {
   box-sizing: inherit;
 }
@@ -114,9 +115,9 @@ select {
   flex-direction: row
 }
 
-a, button {
-  font-size: 14px;
-}
+/*a, button {*/
+/*  font-size: 14px;*/
+/*}*/
 
 a:link.vote, a:visited.vote {
   background-color: darkgreen;
