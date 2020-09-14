@@ -8,15 +8,15 @@
     <table class="center">
         <thead>
             <tr>
-                {% for name in cols.keys() %}
-                {% if name|lower == order_data[0] and order_data[1] == 'asc' %}
+                {% for name in cols.keys() -%}
+                {% if name|lower == order_data[0] and order_data[1] == 'asc' -%}
                 <th>{{ name }}<a class="sort" href="{{ url_for('question_list', order_by=name|lower, order_direction='desc') }}">&#8710;</a><a class="sort_select" href="{{ url_for('question_list', order_by=name|lower, order_direction='asc') }}">&nabla;</a></th>
-                {% elif name|lower == order_data[0] and order_data[1] == 'desc' %}
+                {%- elif name|lower == order_data[0] and order_data[1] == 'desc' %}
                 <th>{{ name }}<a class="sort_select" href="{{ url_for('question_list', order_by=name|lower, order_direction='desc') }}">&#8710;</a><a class="sort" href="{{ url_for('question_list', order_by=name|lower, order_direction='asc') }}">&nabla;</a></th>
-                {% else %}
+                {% else -%}
                 <th>{{ name }}<a class="sort" href="{{ url_for('question_list', order_by=name|lower, order_direction='desc') }}">&#8710;</a><a class="sort" href="{{ url_for('question_list', order_by=name|lower, order_direction='asc') }}">&nabla;</a></th>
-                {% endif %}
-                {%  endfor %}
+                {% endif -%}
+                {%-  endfor %}
             </tr>
         </thead>
         <br>

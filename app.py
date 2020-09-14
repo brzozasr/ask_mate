@@ -2,9 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for
 
 from database_tools import *
 from tools import *
+from upload_file import upload_file
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.register_blueprint(upload_file, url_prefix='/upload')
+
 
 @app.route('/')
 def index():
@@ -74,8 +77,6 @@ def new_answer(question_id):
 def delete_question(question_id):
     db.execute_sql(query.question_delete, [question_id])
     return redirect(url_for('question_list'))
-
-@app.route('/')
 
 
 @app.route('/question/<int:question_id>/edit', methods=['GET', 'POST'])
