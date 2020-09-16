@@ -23,7 +23,7 @@
             <p><strong>{{ question[q_title] }}</strong><br>
             {{ question[q_question] }}</p>
             {% if question[q_image] != None -%}
-            <p>{{ question[q_image] }}</p>
+            <img src="{{ question[q_image] }}">
             {%- endif -%}
             <div class="vote_outer">
                 <div>
@@ -31,6 +31,9 @@
                 </div>
                 <div>&nbsp;&nbsp;<small>Vote: {{ question[q_vote] }}</small></div>
                 <div><a class="add_answer" href="{{ url_for('new_answer', question_id=q_id) }}">+ Add answer</a></div>
+                {% if question[q_image] == None -%}
+                <div><a class="add_answer" href="{{ url_for('upload_file.upload_img_question', question_id=q_id) }}">+ Add image</a></div>
+                {%- endif %}
             </div>
 
         </div>

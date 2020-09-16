@@ -40,6 +40,8 @@ __query_all = {
         'DELETE FROM question WHERE id = %s',
     'question_update':
         'UPDATE question SET title = %s, message = %s WHERE id = %s',
+    'question_update_img':
+        'UPDATE question SET image = %s WHERE id = %s'
 }
 
 
