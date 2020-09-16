@@ -76,6 +76,17 @@ input[type=number] {
   box-sizing: border-box;
 }
 
+input[type=file] {
+  width: 100%;
+  color: #000099;
+  padding: 4px 6px;
+  margin: 6px 0;
+  display: inline-block;
+  border: 1px solid #0080ff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
 input[type=submit].btn, input[type=button].btn {
   background-color: #0040ff;
   border: none;
@@ -115,9 +126,9 @@ select {
   flex-direction: row
 }
 
-/*a, button {*/
-/*  font-size: 14px;*/
-/*}*/
+a, button {
+  font-size: 14px;
+}
 
 a:link.vote, a:visited.vote {
   background-color: darkgreen;
