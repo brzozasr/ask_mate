@@ -1,0 +1,33 @@
+{% extends 'pattern.html' %}
+
+{% set request_path = request.path %}
+{% if '/add_question' in request_path %}
+    {% set title_page = 'Add Question' %}
+    {% set form_url = url_for('add_question') %}
+    {% set cancel_url = url_for('question_list') %}
+    {% set btn_txt = 'Add' %}
+{% elif '/edit' in request_path %}
+    {% set title_page = 'Edit Question' %}
+    {% set question = question[0] %}
+    {% set quest_id = question[0] %}
+    {% set quest_title = question[4] %}
+    {% set quest_text = question[5] %}
+    {% set form_url = url_for('edit_question', question_id=quest_id) %}
+    {% set cancel_url = url_for('question_view', question_id=quest_id, boolean="False") %}
+    {% set btn_txt = 'Edit' %}
+{% endif %}
+
+{% block title %}{{ title_page }}{% endblock %}
+
+{% block content %}
+    <h2 class="title">{{ title_page }}</h2>
+    <form class="center" action="{{ form_url }}" method="post">
+        <label for="title">Question Title:</label><br>
+        <input type="text" id="title" name="title" minlength="5" maxlength="255" value="{{ quest_title }}" placeholder="Write a question title" required><br>
+        <br>
+        <label for="question">Question:</label><br>
+        <textarea id="question" name="question" rows="4" cols="50" placeholder="Write a question" required>{{ quest_text }}</textarea><br>
+        <br>
+        <input class="btn" type="submit" value="{{ btn_txt }}" name="sub_button"><a href="{{ cancel_url }}"><input class="btn" type="button" value="Cancel"></a>
+    </form>
+{% endblock %}

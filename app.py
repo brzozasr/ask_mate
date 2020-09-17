@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask
 
-from database_tools import *
 from tools import *
+from upload_file import *
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.register_blueprint(upload_file, url_prefix='/upload')
 
 
 @app.route('/')
@@ -57,7 +59,7 @@ def add_question():
         db.execute_sql(query.question_insert, [title, question])
         return redirect(url_for('question_list'))
     else:
-        return render_template('add_question.html')
+        return render_template('add_edit_question.html')
 
 
 @app.route('/question/<int:question_id>/new_answer', methods=['GET', 'POST'])
@@ -68,6 +70,38 @@ def new_answer(question_id):
         return redirect(url_for('question_view', question_id=question_id, boolean="False"))
     else:
         return render_template('new_answer.html', question_id=question_id)
+
+
+@app.route('/question/<int:question_id>/delete')
+def delete_question(question_id):
+    list_img = []
+    answer_path_img = db.execute_sql(query.answer_get_img_path, [question_id])
+    if len(answer_path_img) > 0:
+        for answer_img in answer_path_img:
+            if answer_img[0] is not None:
+                list_img.append(answer_img[0])
+
+    question_path_img = db.execute_sql(query.question_delete, [question_id])
+    if len(question_path_img) > 0:
+        if question_path_img[0][0] is not None:
+            list_img.append(question_path_img[0][0])
+
+    if len(list_img) > 0:
+        for path_img in list_img:
+            delete_img(path_img)
+    return redirect(url_for('question_list'))
+
+
+@app.route('/question/<int:question_id>/edit', methods=['GET', 'POST'])
+def edit_question(question_id):
+    if request.method == 'POST':
+        title = request.form['title']
+        question = request.form['question']
+        db.execute_sql(query.question_update, [title, question, question_id])
+        return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+    else:
+        question = db.execute_sql(query.question_select_by_id, [question_id])
+        return render_template('add_edit_question.html', question=question)
 
 
 @app.errorhandler(404)

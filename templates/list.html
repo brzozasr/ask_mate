@@ -1,10 +1,10 @@
 {% extends 'pattern.html' %}
 
-{% block title %}List Questions{% endblock %}
+{% block title %}Questions List{% endblock %}
 
 {% block content %}
-    <h2 class="title">List Questions</h2>
-    <p><a class="btn_green" href="{{ url_for('add_question') }}">+ Add question</a></p>
+    <h2 class="title">Questions List</h2>
+    <p><a class="btn_green" href="{{ url_for('add_question') }}">+ Add a question</a></p>
     <table class="center">
         <thead>
             <tr>
@@ -15,12 +15,12 @@
                 <th>{{ name }}<a class="sort_select" href="{{ url_for('question_list', order_by=name|lower, order_direction='desc') }}">&#8710;</a><a class="sort" href="{{ url_for('question_list', order_by=name|lower, order_direction='asc') }}">&nabla;</a></th>
                 {% else -%}
                 <th>{{ name }}<a class="sort" href="{{ url_for('question_list', order_by=name|lower, order_direction='desc') }}">&#8710;</a><a class="sort" href="{{ url_for('question_list', order_by=name|lower, order_direction='asc') }}">&nabla;</a></th>
-                {% endif %}
-                {%  endfor %}
+                {% endif -%}
+                {%-  endfor %}
             </tr>
         </thead>
         <tbody>
-            {%- for line in questions %}
+            {% for line in questions -%}
                 <tr>
                 {%- for name, no in cols.items() -%}
                     {%- if name == 'Date' %}
@@ -29,7 +29,7 @@
                     {% elif name == 'Title'  -%}
                     <td style="min-width: 150px" class="txt_left">{{ line[no] }}</td>
                     {% elif name == 'Question'  -%}
-                    <td class="txt_left">{{ line[no] }}<br><a class="btn_grey" href="{{ url_for('question_view', question_id=line[0]|int) }}">View question</a></td>
+                    <td class="txt_left">{{ line[no] }}<br><a class="btn_grey" href="{{ url_for('question_view', question_id=line[0]|int) }}">View the question</a></td>
                     {% else -%}
                     <td>{{ line[no] }}</td>
                     {%  endif -%}
