@@ -120,6 +120,11 @@ select {
   background-color: white;
 }
 
+.pic {
+  max-width: 100%;
+  height: auto;
+}
+
 .vote_outer {
   display:flex;
   align-items: center;
@@ -158,6 +163,36 @@ a:link.add_answer, a:visited.add_answer {
 
 a:hover.add_answer, a:active.add_answer {
   background-color: #009933;
+}
+
+a:link.edit, a:visited.edit {
+  background-color: #0146f3;
+  color: white;
+  padding: 2px 8px;
+  margin-left: 3px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+a:hover.edit, a:active.edit {
+  background-color: #0000ff;
+}
+
+a:link.del, a:visited.del {
+  background-color: #f44336;
+  color: white;
+  padding: 2px 8px;
+  margin-left: 3px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+a:hover.del, a:active.del {
+  background-color: red;
 }
 
 a:link.sort, a:visited.sort {
@@ -218,7 +253,7 @@ h2.title {
   border: 1px solid #333;
   box-shadow: 8px 8px 5px #444;
   padding: 8px 12px;
-  margin: 15px 0 0 15px;
+  margin: 15px 0 0 25px;
 }
 
 a:link.btn_red, a:visited.btn_red, .btn_red {
@@ -278,8 +313,4 @@ a:link.btn_grey, a:visited.btn_grey, .btn_grey {
 a:hover.btn_grey, a:active.btn_grey, *:hover.btn_grey {
   background-color: black;
   color: white;
-}
-
-a:link.btn_grey.half_size, a:visited.btn_grey.half_size, .btn_grey.half_size {
-  width:95px;
 }

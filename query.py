@@ -36,12 +36,16 @@ __query_all = {
         'INSERT INTO question (title, message) VALUES (%s, %s)',
     'answer_insert':
         'INSERT INTO answer (question_id, message) VALUES (%s, %s)',
+    'answer_get_img_path':
+        'SELECT image FROM answer WHERE question_id = %s',
     'question_delete':
-        'DELETE FROM question WHERE id = %s',
+        'DELETE FROM question WHERE id = %s RETURNING image',
     'question_update':
         'UPDATE question SET title = %s, message = %s WHERE id = %s',
     'question_update_img':
-        'UPDATE question SET image = %s WHERE id = %s'
+        'UPDATE question SET image = %s WHERE id = %s',
+    'answer_update_img':
+        'UPDATE answer SET image = %s WHERE id = %s'
 }
 
 

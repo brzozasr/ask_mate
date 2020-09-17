@@ -1,11 +1,15 @@
 {% extends 'pattern.html' %}
 
 {% block title %}Upload File{% endblock %}
-
+{% set request_path = request.path %}
+{% if '/question/' in request_path %}
+    {% set upload_url = url_for('upload_file.upload_img_question', question_id=question_id) %}
+{% elif '/answer/' in request_path %}
+    {% set upload_url = url_for('upload_file.upload_img_answer', answer_id=answer_id, question_id=question_id) %}
+{% endif %}
 {% block content %}
-    {{ no_file }}
     <h2 class="title">Upload File</h2>
-     <form class="center" action="{{ url_for('upload_file.upload_img_question', question_id=question_id) }}" method="post" enctype="multipart/form-data" accept=".png,.jpg,.jpeg">
+     <form class="center" action="{{ upload_url }}" method="post" enctype="multipart/form-data" accept=".png,.jpg,.jpeg">
         <label for="file_img">Select a image:</label>
         <input type="file" id="file_img" name="file_img">
         <input class="btn" type="submit" value="Add File"><a href="{{ url_for('question_view', question_id=question_id, boolean="False") }}"><input class="btn" type="button" value="Cancel"></a>
