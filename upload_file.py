@@ -23,6 +23,18 @@ def create_dir(dir_to_create):
         print(error)
 
 
+def delete_img(file_name):
+    try:
+        current_dir = os.getcwd()
+        entire_path = os.path.join(current_dir, file_name[1:])
+        if os.path.exists(entire_path):
+            os.remove(entire_path)
+        else:
+            print(f'There is no such file: {file_name}!')
+    except OSError as e:
+        print(f'Error: {e.filename}: {e.strerror}!')
+
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -48,8 +60,8 @@ def upload_img_question(question_id):
             return redirect(request.url)
         elif file and allowed_file(file.filename):
             file_img = secure_filename(file.filename)
-            file_list = file_img.split('.')
-            file_img = f'q{question_id}.{file_list[1]}'
+            file_list = file_img.rsplit('.', 1)
+            file_img = f'q{question_id}.{file_list[1].lower()}'
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], file_img)
             file_path_db = os.path.join('/', file_path)
             db.execute_sql(query.question_update_img, [file_path_db, question_id])
@@ -62,8 +74,35 @@ def upload_img_question(question_id):
         return render_template('upload.html', question_id=question_id)
 
 
-@upload_file.route('/answer/<int:answer_id>')
-def upload_img_answer(answer_id):
+@upload_file.route('/answer/<int:answer_id>/<int:question_id>', methods=['GET', 'POST'])
+def upload_img_answer(answer_id, question_id):
+    create_dir(UPLOAD_FOLDER)
+
     current_app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-    current_app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
-    return render_template('upload.html')
+    current_app.secret_key = b'secret_key!@#$%'
+
+    if request.method == 'POST':
+        file = request.files['file_img']
+        if file.filename == '':
+            flash('No selected file!')
+            return redirect(request.url)
+        elif not allowed_file(file.filename):
+            flash('Allowed file extensions: *.png, *.jpg, *.jpeg!')
+            return redirect(request.url)
+        elif request.content_length > MAX_CONTENT_LENGTH:
+            flash('Allowed max size of file is 512 KB (Kilobyte)!')
+            return redirect(request.url)
+        elif file and allowed_file(file.filename):
+            file_img = secure_filename(file.filename)
+            file_list = file_img.rsplit('.', 1)
+            file_img = f'a{answer_id}.{file_list[1].lower()}'
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], file_img)
+            file_path_db = os.path.join('/', file_path)
+            db.execute_sql(query.answer_update_img, [file_path_db, answer_id])
+            file.save(file_path)
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        else:
+            flash('There is something wrong with upload process!')
+            return redirect(request.url)
+    else:
+        return render_template('upload.html', answer_id=answer_id, question_id=question_id)

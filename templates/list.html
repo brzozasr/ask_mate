@@ -19,9 +19,9 @@
                 {%-  endfor %}
             </tr>
         </thead>
-        <br>
-            {%- for line in questions %}
-                <br>
+        <tbody>
+            {% for line in questions -%}
+                <tr>
                 {%- for name, no in cols.items() -%}
                     {%- if name == 'Date' %}
                     {% set date = line[no]|string -%}
@@ -29,11 +29,7 @@
                     {% elif name == 'Title'  -%}
                     <td style="min-width: 150px" class="txt_left">{{ line[no] }}</td>
                     {% elif name == 'Question'  -%}
-                        <td class="txt_left">{{ line[no] }}<br><a class="btn_grey" href="{{ url_for('question_view', question_id=line[0]|int) }}">View the question</a><br/>
-                    <a class="btn_grey half_size" href="{{ url_for('edit_question', question_id=line[0]|int) }}">Edit</a><form action="{{ url_for('delete_question', question_id=line[0]|int) }}" method="POST" style="display:inline-block">
-                        <button class="btn_grey half_size" type="submit">Delete</button>
-                    </form>
-                    </td>
+                    <td class="txt_left">{{ line[no] }}<br><a class="btn_grey" href="{{ url_for('question_view', question_id=line[0]|int) }}">View the question</a></td>
                     {% else -%}
                     <td>{{ line[no] }}</td>
                     {%  endif -%}
