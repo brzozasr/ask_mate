@@ -19,7 +19,7 @@
     <h2 class="title">Question View</h2>
     <p><a class="btn_green" href="{{ url_for('question_list') }}">&lt;&lt; Back to questions</a></p>
         <div class="question">
-            <p><small>Posted date: {{ q_date[:19] }}, Viewed: {{ question[q_view] }}</small></p>
+            <p><small>Posted date: {{ q_date[:19] }}, Viewed: {{ question[q_view] }}, Answers: {{ answer_count[0][0] }}</small></p>
             <p><strong>{{ question[q_title] }}</strong><br>
             {{ question[q_question] }}</p>
             {% if question[q_image] != None -%}
