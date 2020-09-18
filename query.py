@@ -27,11 +27,15 @@ __query_all = {
     'question_update_view_number_by_id':
         'UPDATE question SET view_number = %s + 1 WHERE id = %s',
     'answer_select_by_id':
-        'SELECT * FROM answer WHERE question_id = %s',
+        'SELECT * FROM answer WHERE question_id = %s ORDER BY submission_time DESC',
     'question_select_vote_number_by_id':
         'SELECT vote_number FROM question WHERE id = %s',
     'question_update_vote_number_by_id':
         'UPDATE question SET vote_number = %s + %s WHERE id = %s',
+    'answer_select_vote_number_by_id':
+        'SELECT vote_number FROM answer WHERE id = %s',
+    'answer_update_vote_number_by_id':
+        'UPDATE answer SET vote_number = %s + %s WHERE id = %s',
     'question_insert':
         'INSERT INTO question (title, message) VALUES (%s, %s)',
     'answer_insert':
@@ -45,7 +49,9 @@ __query_all = {
     'question_update_img':
         'UPDATE question SET image = %s WHERE id = %s',
     'answer_update_img':
-        'UPDATE answer SET image = %s WHERE id = %s'
+        'UPDATE answer SET image = %s WHERE id = %s',
+    'answer_delete':
+        'DELETE FROM answer WHERE id = %s RETURNING image, question_id'
 }
 
 
