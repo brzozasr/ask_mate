@@ -33,9 +33,10 @@ def question_view(question_id, boolean="True"):
         view_question = db.execute_sql(query.question_select_view_number_by_id, [question_id])
         db.execute_sql(query.question_update_view_number_by_id, [view_question[0][0], question_id])
 
+    answer_count = db.execute_sql(query.answer_count_fk_question_id, [question_id])
     question = db.execute_sql(query.question_select_by_id, [question_id])
     answer = db.execute_sql(query.answer_select_by_id, [question_id])
-    return render_template('question.html', question=question, answer=answer)
+    return render_template('question.html', question=question, answer=answer, answer_count=answer_count)
 
 
 @app.route('/vote/<element>/<int:question_id>/<int:value>/')
