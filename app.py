@@ -39,15 +39,20 @@ def question_view(question_id, boolean="True"):
 
 
 @app.route('/vote/<element>/<int:question_id>/<int:value>/')
-@app.route('/vote/<element>/<int:question_id>/<int:value>/<int:vote_id>')
-def vote(question_id, element, value, vote_id=None):
+@app.route('/vote/<element>/<int:question_id>/<int:value>/<int:answer_id>')
+def vote(question_id, element, value, answer_id=None):
     elements = {'question': 'question', 'answer': 'answer', 'comment': 'comment'}
+
     if value == 2:
         value = -1
 
     if element == elements['question']:
         vote_question = db.execute_sql(query.question_select_vote_number_by_id, [question_id])
         db.execute_sql(query.question_update_vote_number_by_id, [vote_question[0][0], value, question_id])
+    elif element == elements['answer']:
+        vote_answer = db.execute_sql(query.answer_select_vote_number_by_id, [answer_id])
+        db.execute_sql(query.answer_update_vote_number_by_id, [vote_answer[0][0], value, answer_id])
+
     return redirect(url_for('question_view', question_id=question_id, boolean="False"))
 
 
@@ -90,6 +95,16 @@ def delete_question(question_id):
         for path_img in list_img:
             delete_img(path_img)
     return redirect(url_for('question_list'))
+
+
+@app.route('/answer/<int:answer_id>/delete')
+def delete_answer(answer_id):
+    path_and_id = db.execute_sql(query.answer_delete, [answer_id])
+
+    if len(path_and_id) > 0 and path_and_id[0][0] is not None:
+        delete_img(path_and_id[0][0])
+
+    return redirect(url_for('question_view', question_id=path_and_id[0][1], boolean="False"))
 
 
 @app.route('/question/<int:question_id>/edit', methods=['GET', 'POST'])

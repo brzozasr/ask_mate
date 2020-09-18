@@ -150,18 +150,21 @@ a:hover.vote, a:active.vote {
   background-color: #009933;
 }
 
-a:link.add_answer, a:visited.add_answer {
+.separate {
+  margin-left: 80px;
+}
+
+a:link.add, a:visited.add {
   background-color: darkgreen;
   color: white;
   padding: 2px 8px;
-  margin-left: 80px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   border-radius: 4px;
 }
 
-a:hover.add_answer, a:active.add_answer {
+a:hover.add, a:active.add {
   background-color: #009933;
 }
 
