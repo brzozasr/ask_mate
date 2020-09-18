@@ -30,9 +30,9 @@
                     <a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=1) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=2) }}">-</a>
                 </div>
                 <div>&nbsp;&nbsp;<small>Vote: {{ question[q_vote] }}</small></div>
-                <div><a class="add_answer" href="{{ url_for('new_answer', question_id=q_id) }}">+ Add answer</a>
+                <div class="separate"><a class="add" style="margin-right: 50px" href="{{ url_for('new_answer', question_id=q_id) }}">+ Add answer</a>
                 {% if question[q_image] == None -%}
-                <a class="add_answer" href="{{ url_for('upload_file.upload_img_question', question_id=q_id) }}">+ Add image</a>
+                <a class="add" href="{{ url_for('upload_file.upload_img_question', question_id=q_id) }}">+ Add image</a>
                 {%- endif %}
                 <a class="edit" href="{{ url_for('edit_question', question_id=q_id) }}">&plusmn; Edit question</a>
                 <a class="del" href="{{ url_for('delete_question', question_id=q_id) }}" onclick="return confirm('Do you want to delete question with ID: {{ q_id }}?');">- Delete question</a>
@@ -48,11 +48,15 @@
             <img class="pic" src="{{ a_line[a_image] }}" alt="Add image">
             {%- endif -%}
             <div class="vote_outer">
-                <div>&nbsp;&nbsp;<small>Vote: {{ a_line[a_vote] }}</small></div>
                 <div>
+                    <a class="vote" href="{{ url_for('vote', element='answer', question_id=q_id, value=1, answer_id=a_line[a_id]) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='answer', question_id=q_id, value=2, answer_id=a_line[a_id]) }}">-</a>
+                </div>
+                <div>&nbsp;&nbsp;<small>Vote: {{ a_line[a_vote] }}</small></div>
+                <div class="separate">
                 {% if a_line[a_image] == None -%}
-                <a class="add_answer" href="{{ url_for('upload_file.upload_img_answer', answer_id=a_line[a_id], question_id=q_id) }}">+ Add image</a>
+                <a class="add" href="{{ url_for('upload_file.upload_img_answer', answer_id=a_line[a_id], question_id=q_id) }}">+ Add image</a>
                 {%- endif %}
+                <a class="del" href="{{ url_for('delete_answer', answer_id=a_line[a_id]) }}" onclick="return confirm('Do you want to delete answer with ID: {{ a_line[a_id] }}?');">- Delete answer</a>
                 </div>
             </div>
         </div>
