@@ -51,7 +51,9 @@ __query_all = {
     'answer_update_img':
         'UPDATE answer SET image = %s WHERE id = %s',
     'answer_delete':
-        'DELETE FROM answer WHERE id = %s RETURNING image, question_id'
+        'DELETE FROM answer WHERE id = %s RETURNING image, question_id',
+    'answer_count_fk_question_id':
+        'SELECT COUNT(question_id) FROM answer WHERE question_id = %s'
 }
 
 

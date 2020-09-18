@@ -27,9 +27,9 @@
                     {% set date = line[no]|string -%}
                     <td style="min-width: 90px">{{ date[:19] }}</td>
                     {% elif name == 'Title'  -%}
-                    <td style="min-width: 150px" class="txt_left">{{ line[no] }}</td>
+                    <td style="min-width: 150px" class="txt_left">{{ line[no]|truncate(100) }}</td>
                     {% elif name == 'Question'  -%}
-                    <td class="txt_left">{{ line[no] }}<br><a class="btn_grey" href="{{ url_for('question_view', question_id=line[0]|int) }}">View the question</a></td>
+                    <td class="txt_left">{{ line[no]|truncate(320) }}<br><a class="btn_grey" href="{{ url_for('question_view', question_id=line[0]|int) }}">View the question</a></td>
                     {% else -%}
                     <td>{{ line[no] }}</td>
                     {%  endif -%}
