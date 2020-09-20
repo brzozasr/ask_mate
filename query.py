@@ -57,7 +57,7 @@ __query_all = {
     'comment_insert_to_question':
         'INSERT INTO comment (question_id, message) VALUES (%s, %s)',
     'comment_insert_to_answer':
-        'INSERT INTO comment (answer_id, message) VALUES (%s, %s)'
+        'INSERT INTO comment (question_id, answer_id, message) VALUES (%s, %s, %s)'
 }
 
 

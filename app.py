@@ -89,7 +89,7 @@ def add_comment(question_id, answer_id=None, comment_id=None):
             return redirect(url_for('question_view', question_id=question_id, boolean="False"))
         elif '/answer/' in request.path:
             comment_answer = request.form['comment']
-            db.execute_sql(query.comment_insert_to_answer, [answer_id, comment_answer])
+            db.execute_sql(query.comment_insert_to_answer, [question_id, answer_id, comment_answer])
             return redirect(url_for('question_view', question_id=question_id, boolean="False"))
         elif '/comment/' in request.path:
             return redirect(url_for('question_view', question_id=question_id, boolean="False"))
