@@ -1,0 +1,31 @@
+{% extends 'pattern.html' %}
+
+{% set request_path = request.path %}
+{% if '/question/' in request_path %}
+    {% set title_page = 'Add Comment to Question' %}
+    {% set header = 'Add a Comment' %}
+    {% set form_url = url_for('comment_question', question_id=question_id) %}
+    {% set btn_txt = 'Add' %}
+{% elif '/answer/' in request_path %}
+    {% set title_page = 'Add Comment to Answer' %}
+    {% set header = 'Add a Comment' %}
+    {% set form_url = url_for('comment_answer', question_id=question_id, answer_id=answer_id) %}
+    {% set btn_txt = 'Add' %}
+{% elif '/comment/' in request_path %}
+    {% set title_page = 'Edit Comment' %}
+    {% set header = 'Edit a Comment' %}
+    {% set form_url = url_for('comment_edit', question_id=question_id, comment_id=comment_id) %}
+    {% set btn_txt = 'Edit' %}
+{% endif %}
+
+{% block title %}{{ title_page }}{% endblock %}
+
+{% block content %}
+    <h2 class="title">{{ header }}</h2>
+    <form class="center" action="{{ form_url }}" method="post">
+        <label for="comment">Comment:</label><br>
+        <textarea id="comment" name="comment" rows="4" cols="50" placeholder="Write a comment" required></textarea><br>
+        <br>
+        <input class="btn" type="submit" value="{{ btn_txt }}" name="sub_button"><a href="{{ url_for('question_view', question_id=question_id, boolean="False") }}"><input class="btn" type="button" value="Cancel"></a>
+    </form>
+{% endblock %}

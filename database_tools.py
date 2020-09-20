@@ -77,8 +77,8 @@ class DatabaseTools:
 
             """CREATE TABLE IF NOT EXISTS comment (
             id SERIAL PRIMARY KEY,
-            question_id INT NOT NULL REFERENCES question ( id ) ON DELETE CASCADE,
-            answer_id INT NOT NULL REFERENCES answer ( id ) ON DELETE CASCADE,
+            question_id INT REFERENCES question ( id ) ON DELETE CASCADE,
+            answer_id INT REFERENCES answer ( id ) ON DELETE CASCADE,
             message TEXT NOT NULL,
             submission_time TIMESTAMP NOT NULL DEFAULT NOW(),
             edited_number INT NOT NULL DEFAULT 0

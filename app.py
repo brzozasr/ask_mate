@@ -78,6 +78,25 @@ def new_answer(question_id):
         return render_template('new_answer.html', question_id=question_id)
 
 
+@app.route('/question/<int:question_id>/new-comment', endpoint='comment_question', methods=['GET', 'POST'])
+@app.route('/answer/<int:question_id>/<int:answer_id>/new-comment', endpoint='comment_answer', methods=['GET', 'POST'])
+@app.route('/comment/<int:question_id>/<int:comment_id>/edit', endpoint='comment_edit', methods=['GET', 'POST'])
+def add_comment(question_id, answer_id=None, comment_id=None):
+    if request.method == 'POST':
+        if '/question/' in request.path:
+            comment_question = request.form['comment']
+            db.execute_sql(query.comment_insert_to_question, [question_id, comment_question])
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        elif '/answer/' in request.path:
+            comment_answer = request.form['comment']
+            db.execute_sql(query.comment_insert_to_answer, [answer_id, comment_answer])
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        elif '/comment/' in request.path:
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+    else:
+        return render_template('form_comment.html', question_id=question_id, answer_id=answer_id, comment_id=comment_id)
+
+
 @app.route('/question/<int:question_id>/delete')
 def delete_question(question_id):
     list_img = []
