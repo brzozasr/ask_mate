@@ -22,20 +22,14 @@ __query_all = {
         'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question ORDER BY message ASC',
     'question_select_by_id':
         'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question WHERE id = %s',
-    'question_select_view_number_by_id':
-        'SELECT view_number FROM question WHERE id = %s',
     'question_update_view_number_by_id':
-        'UPDATE question SET view_number = %s + 1 WHERE id = %s',
+        'UPDATE question SET view_number = view_number + 1 WHERE id = %s',
     'answer_select_by_id':
         'SELECT id, submission_time, vote_number, question_id, message, image FROM answer WHERE question_id = %s ORDER BY submission_time DESC',
-    'question_select_vote_number_by_id':
-        'SELECT vote_number FROM question WHERE id = %s',
     'question_update_vote_number_by_id':
-        'UPDATE question SET vote_number = %s + %s WHERE id = %s',
-    'answer_select_vote_number_by_id':
-        'SELECT vote_number FROM answer WHERE id = %s',
+        'UPDATE question SET vote_number = vote_number + %s WHERE id = %s',
     'answer_update_vote_number_by_id':
-        'UPDATE answer SET vote_number = %s + %s WHERE id = %s',
+        'UPDATE answer SET vote_number = vote_number + %s WHERE id = %s',
     'question_insert':
         'INSERT INTO question (title, message) VALUES (%s, %s)',
     'answer_insert':
@@ -53,7 +47,17 @@ __query_all = {
     'answer_delete':
         'DELETE FROM answer WHERE id = %s RETURNING image, question_id',
     'answer_count_fk_question_id':
-        'SELECT COUNT(question_id) FROM answer WHERE question_id = %s'
+        'SELECT COUNT(question_id) FROM answer WHERE question_id = %s',
+    'comment_insert_to_question':
+        'INSERT INTO comment (question_id, message) VALUES (%s, %s)',
+    'comment_insert_to_answer':
+        'INSERT INTO comment (question_id, answer_id, message) VALUES (%s, %s, %s)',
+    'comment_select_by_question_id':
+        'SELECT id, question_id, answer_id, message, submission_time, edited_number FROM comment WHERE question_id = %s ORDER BY submission_time DESC',
+    'comment_select_by_comment_id':
+        'SELECT id, question_id, answer_id, message, submission_time, edited_number FROM comment WHERE id = %s',
+    'comment_update_by_id':
+        'UPDATE comment SET message = %s, submission_time = NOW(), edited_number = edited_number + 1 WHERE id = %s'
 }
 
 

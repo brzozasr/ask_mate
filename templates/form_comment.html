@@ -1,0 +1,33 @@
+{% extends 'pattern.html' %}
+
+{% set comment_all = '' %}
+{% if request.endpoint == 'comment_question' %}
+    {% set title_page = 'Add Comment to Question' %}
+    {% set header = 'Add a Comment' %}
+    {% set form_url = url_for('comment_question', question_id=question_id) %}
+    {% set btn_txt = 'Add' %}
+{% elif request.endpoint == 'comment_answer' %}
+    {% set title_page = 'Add Comment to Answer' %}
+    {% set header = 'Add a Comment' %}
+    {% set form_url = url_for('comment_answer', question_id=question_id, answer_id=answer_id) %}
+    {% set btn_txt = 'Add' %}
+{% elif request.endpoint == 'comment_edit' %}
+    {% set title_page = 'Edit Comment' %}
+    {% set header = 'Edit a Comment' %}
+    {% set form_url = url_for('comment_edit', question_id=question_id, comment_id=comment_id) %}
+    {% set btn_txt = 'Edit' %}
+    {% set comment_all = comment[0] %}
+    {% set comment_txt = 3 %}
+{% endif %}
+
+{% block title %}{{ title_page }}{% endblock %}
+
+{% block content %}
+    <h2 class="title">{{ header }}</h2>
+    <form class="center" action="{{ form_url }}" method="post">
+        <label for="comment">Comment:</label><br>
+        <textarea id="comment" name="comment" rows="4" cols="50" placeholder="Write a comment" required>{{ comment_all[comment_txt] }}</textarea><br>
+        <br>
+        <input class="btn" type="submit" value="{{ btn_txt }}" name="sub_button"><a href="{{ url_for('question_view', question_id=question_id, boolean="False") }}"><input class="btn" type="button" value="Cancel"></a>
+    </form>
+{% endblock %}
