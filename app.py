@@ -30,8 +30,7 @@ def question_list():
 @app.route('/question/<int:question_id>/<boolean>')
 def question_view(question_id, boolean="True"):
     if eval(boolean):
-        view_question = db.execute_sql(query.question_select_view_number_by_id, [question_id])
-        db.execute_sql(query.question_update_view_number_by_id, [view_question[0][0], question_id])
+        db.execute_sql(query.question_update_view_number_by_id, [question_id])
 
     answer_count = db.execute_sql(query.answer_count_fk_question_id, [question_id])
     question = db.execute_sql(query.question_select_by_id, [question_id])
@@ -48,11 +47,9 @@ def vote(question_id, element, value, answer_id=None):
         value = -1
 
     if element == elements['question']:
-        vote_question = db.execute_sql(query.question_select_vote_number_by_id, [question_id])
-        db.execute_sql(query.question_update_vote_number_by_id, [vote_question[0][0], value, question_id])
+        db.execute_sql(query.question_update_vote_number_by_id, [value, question_id])
     elif element == elements['answer']:
-        vote_answer = db.execute_sql(query.answer_select_vote_number_by_id, [answer_id])
-        db.execute_sql(query.answer_update_vote_number_by_id, [vote_answer[0][0], value, answer_id])
+        db.execute_sql(query.answer_update_vote_number_by_id, [value, answer_id])
 
     return redirect(url_for('question_view', question_id=question_id, boolean="False"))
 
