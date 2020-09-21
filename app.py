@@ -30,13 +30,14 @@ def question_list():
 @app.route('/question/<int:question_id>/<boolean>')
 def question_view(question_id, boolean="True"):
     if eval(boolean):
-        view_question = db.execute_sql(query.question_select_view_number_by_id, [question_id])
-        db.execute_sql(query.question_update_view_number_by_id, [view_question[0][0], question_id])
+        db.execute_sql(query.question_update_view_number_by_id, [question_id])
 
     answer_count = db.execute_sql(query.answer_count_fk_question_id, [question_id])
     question = db.execute_sql(query.question_select_by_id, [question_id])
     answer = db.execute_sql(query.answer_select_by_id, [question_id])
-    return render_template('question.html', question=question, answer=answer, answer_count=answer_count)
+    comment = db.execute_sql(query.comment_select_by_question_id, [question_id])
+    return render_template('question.html', question=question, answer=answer, comment=comment,
+                           answer_count=answer_count)
 
 
 @app.route('/vote/<element>/<int:question_id>/<int:value>/')
@@ -48,11 +49,9 @@ def vote(question_id, element, value, answer_id=None):
         value = -1
 
     if element == elements['question']:
-        vote_question = db.execute_sql(query.question_select_vote_number_by_id, [question_id])
-        db.execute_sql(query.question_update_vote_number_by_id, [vote_question[0][0], value, question_id])
+        db.execute_sql(query.question_update_vote_number_by_id, [value, question_id])
     elif element == elements['answer']:
-        vote_answer = db.execute_sql(query.answer_select_vote_number_by_id, [answer_id])
-        db.execute_sql(query.answer_update_vote_number_by_id, [vote_answer[0][0], value, answer_id])
+        db.execute_sql(query.answer_update_vote_number_by_id, [value, answer_id])
 
     return redirect(url_for('question_view', question_id=question_id, boolean="False"))
 
@@ -76,6 +75,29 @@ def new_answer(question_id):
         return redirect(url_for('question_view', question_id=question_id, boolean="False"))
     else:
         return render_template('new_answer.html', question_id=question_id)
+
+
+@app.route('/question/<int:question_id>/new-comment', endpoint='comment_question', methods=['GET', 'POST'])
+@app.route('/answer/<int:question_id>/<int:answer_id>/new-comment', endpoint='comment_answer', methods=['GET', 'POST'])
+@app.route('/comment/<int:question_id>/<int:comment_id>/edit', endpoint='comment_edit', methods=['GET', 'POST'])
+def add_comment(question_id, answer_id=None, comment_id=None):
+    if request.method == 'POST':
+        if request.endpoint == 'comment_question':
+            comment_question = request.form['comment']
+            db.execute_sql(query.comment_insert_to_question, [question_id, comment_question])
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        elif request.endpoint == 'comment_answer':
+            comment_answer = request.form['comment']
+            db.execute_sql(query.comment_insert_to_answer, [question_id, answer_id, comment_answer])
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        elif request.endpoint == 'comment_edit':
+            comment_edit = request.form['comment']
+            db.execute_sql(query.comment_update_by_id, [comment_edit, comment_id])
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+    else:
+        comment = db.execute_sql(query.comment_select_by_comment_id, [comment_id])
+        return render_template('form_comment.html', question_id=question_id, answer_id=answer_id, comment_id=comment_id,
+                               comment=comment)
 
 
 @app.route('/question/<int:question_id>/delete')
