@@ -51,7 +51,13 @@ __query_all = {
     'comment_insert_to_question':
         'INSERT INTO comment (question_id, message) VALUES (%s, %s)',
     'comment_insert_to_answer':
-        'INSERT INTO comment (question_id, answer_id, message) VALUES (%s, %s, %s)'
+        'INSERT INTO comment (question_id, answer_id, message) VALUES (%s, %s, %s)',
+    'comment_select_by_question_id':
+        'SELECT id, question_id, answer_id, message, submission_time, edited_number FROM comment WHERE question_id = %s ORDER BY submission_time DESC',
+    'comment_select_by_comment_id':
+        'SELECT id, question_id, answer_id, message, submission_time, edited_number FROM comment WHERE id = %s',
+    'comment_update_by_id':
+        'UPDATE comment SET message = %s, submission_time = NOW(), edited_number = edited_number + 1 WHERE id = %s'
 }
 
 

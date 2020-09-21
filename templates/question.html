@@ -15,9 +15,16 @@
 {% set a_vote = 2 %}
 {% set a_answer = 4 %}
 {% set a_image = 5 %}
+{% set c_id = 0 %}
+{% set c_question_id = 1 %}
+{% set c_answer_id = 2 %}
+{% set c_message = 3 %}
+{% set c_date_sub = 4 %}
+{% set c_edited_no = 5 %}
 {% block content %}
     <h2 class="title">Question View</h2>
     <p><a class="btn_green" href="{{ url_for('question_list') }}">&lt;&lt; Back to questions</a></p>
+        {# Question -#}
         <div class="question">
             <p><small>Posted date: {{ q_date[:19] }}, Viewed: {{ question[q_view] }}, Answers: {{ answer_count[0][0] }}</small></p>
             <p><strong>{{ question[q_title] }}</strong><br>
@@ -25,7 +32,7 @@
             {% if question[q_image] != None -%}
             <img class="pic" src="{{ question[q_image] }}" alt="Add image">
             {%- endif -%}
-            <div class="vote_outer">
+            <div class="inner">
                 <div>
                     <a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=1) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=2) }}">-</a>
                 </div>
@@ -40,9 +47,22 @@
                 </div>
             </div>
         </div>
-        <div class="comment">
-
-        </div>
+        {# Comments for a question -#}
+        {% for c_line in comment -%}
+            {% if c_line[c_answer_id] == None -%}
+            {% set c_date = c_line[c_date_sub]|string -%}
+            <div class="comment">
+                <p><small>Posted date: {{ c_date[:19] }}, Edited times: {{ c_line[c_edited_no] }}</small></p>
+                <p class="comment-font">{{ c_line[c_message] }}</p>
+                <div class="inner">
+                    <div>
+                        <a class="edit" href="{{ url_for('comment_edit', question_id=q_id, comment_id=c_line[c_id]) }}">&plusmn; Edit comment</a>
+                    </div>
+                </div>
+            </div>
+            {%- endif %}
+        {%- endfor %}
+        {# Answers -#}
         {% for a_line in answer -%}
         {% set a_date = a_line[a_date_sub]|string -%}
         <div class="answer">
@@ -51,7 +71,7 @@
             {% if a_line[a_image] != None -%}
             <img class="pic" src="{{ a_line[a_image] }}" alt="Add image">
             {%- endif -%}
-            <div class="vote_outer">
+            <div class="inner">
                 <div>
                     <a class="vote" href="{{ url_for('vote', element='answer', question_id=q_id, value=1, answer_id=a_line[a_id]) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='answer', question_id=q_id, value=2, answer_id=a_line[a_id]) }}">-</a>
                 </div>
@@ -65,5 +85,20 @@
                 </div>
             </div>
         </div>
+        {# Coments to an answer -#}
+        {% for c_line in comment  -%}
+            {% if c_line[c_answer_id] == a_line[a_id] -%}
+            {% set c_date = c_line[c_date_sub]|string -%}
+            <div class="comment">
+                <p><small>Posted date: {{ c_date[:19] }}, Edited times: {{ c_line[c_edited_no] }}</small></p>
+                <p class="comment-font">{{ c_line[c_message] }}</p>
+                <div class="inner">
+                    <div>
+                        <a class="edit" href="{{ url_for('comment_edit', question_id=q_id, comment_id=c_line[c_id]) }}">&plusmn; Edit comment</a>
+                    </div>
+                </div>
+            </div>
+            {%- endif %}
+        {%- endfor %}
         {%- endfor %}
 {% endblock %}
