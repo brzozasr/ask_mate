@@ -6,6 +6,7 @@ from upload_file import *
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(upload_file, url_prefix='/upload')
+app.jinja_env.globals.update(highlight_phrase=highlight_phrase)
 
 
 @app.route('/')
@@ -140,6 +141,17 @@ def edit_question(question_id):
     else:
         question = db.execute_sql(query.question_select_by_id, [question_id])
         return render_template('add_edit_question.html', question=question)
+
+
+@app.route('/search')
+def search():
+    if request.args.get('advanced_search') is None:
+        # TODO task: Search questions. Implement searching in questions and answers.
+        return render_template('search.html')
+    elif request.args.get('advanced_search') == 'on':
+        return render_template('advanced_search.html')
+    else:
+        return redirect(url_for('question_list'))
 
 
 @app.errorhandler(404)
