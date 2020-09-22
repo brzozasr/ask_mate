@@ -58,6 +58,19 @@ __query_all = {
         'SELECT id, question_id, answer_id, message, submission_time, edited_number FROM comment WHERE id = %s',
     'comment_update_by_id':
         'UPDATE comment SET message = %s, submission_time = NOW(), edited_number = edited_number + 1 WHERE id = %s',
+    'advanced_search':
+        """SELECT question.id, 'Q' || question.id, question.title || ' ' || question.message, question.submission_time AS date
+            FROM question
+            WHERE question.title || ' ' || question.message ILIKE %(search)s
+            UNION
+            SELECT answer.question_id, 'A' || answer.question_id, answer.message, answer.submission_time AS date
+            FROM answer
+            WHERE answer.message ILIKE %(search)s
+            UNION
+            SELECT comment.question_id, 'C' || comment.question_id, comment.message, comment.submission_time AS date
+            FROM comment
+            WHERE comment.message ILIKE %(search)s
+            ORDER BY date DESC"""
 }
 
 

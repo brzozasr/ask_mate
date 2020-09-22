@@ -149,7 +149,10 @@ def search():
         # TODO task: Search questions. Implement searching in questions and answers.
         return render_template('search.html')
     elif request.args.get('advanced_search') == 'on':
-        return render_template('advanced_search.html')
+        phrase = request.args.get('search')
+        query_phrase = f'%{phrase}%'
+        adv_search = db.execute_sql(query.advanced_search, {'search': query_phrase})
+        return render_template('advanced_search.html', adv_search=adv_search, phrase=phrase)
     else:
         return redirect(url_for('question_list'))
 
