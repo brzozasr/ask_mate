@@ -57,7 +57,7 @@ __query_all = {
     'comment_select_by_comment_id':
         'SELECT id, question_id, answer_id, message, submission_time, edited_number FROM comment WHERE id = %s',
     'comment_update_by_id':
-        'UPDATE comment SET message = %s, submission_time = NOW(), edited_number = edited_number + 1 WHERE id = %s'
+        'UPDATE comment SET message = %s, submission_time = NOW(), edited_number = edited_number + 1 WHERE id = %s',
 }
 
 

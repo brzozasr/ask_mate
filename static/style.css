@@ -131,6 +131,29 @@ select {
   flex-direction: row
 }
 
+.bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.bar > div {
+  width: 260px;
+  margin: 5px;
+  text-align: left;
+  line-height: 15px;
+}
+
+input[type=text].search {
+  width: 180px;
+  color: #000099;
+  padding: 7px 10px;
+  margin: 6px 0;
+  display: inline-block;
+  border: 1px solid #0080ff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
 a, button {
   font-size: 14px;
 }
