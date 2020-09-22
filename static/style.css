@@ -41,6 +41,36 @@ table.center {
   margin-right:auto;
 }
 
+/*table search result - start*/
+table.adv-search {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td.adv-search {
+  padding: 5px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover.adv-search {
+  background-color: #cccccc;
+  cursor: pointer;
+}
+
+.que {
+  padding-left: 5px !important;
+}
+
+.ans {
+  padding-left: 25px !important;
+}
+
+.com {
+  padding-left: 50px !important;
+}
+/*table search result - end*/
+
 form.center {
   max-width: 500px;
   margin: auto;

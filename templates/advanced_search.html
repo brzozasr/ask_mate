@@ -1,8 +1,29 @@
 {% extends 'pattern.html' %}
 
+{% set search_id = 0 %} {# It is question ID #}
+{% set search_type = 1 %}
+{% set search_txt = 2 %}
+
 {% block title %}Advanced Search{% endblock %}
 
 {% block content %}
     <h2 class="title">Advanced Search</h2>
-
+    <p><a class="btn_green" href="{{ url_for('question_list') }}">&lt;&lt; Back to questions</a></p>
+    <table class="adv-search">
+    {% for row in adv_search -%}
+        {% if row[search_type][0:1] == 'Q' -%}
+            {% set type_title = '<strong>Question:</strong>' -%}
+            {% set style_search = 'que' -%}
+        {% elif row[search_type][0:1] == 'A' -%}
+            {% set type_title = '<strong>Answer:</strong>' -%}
+            {% set style_search = 'ans' -%}
+        {% elif row[search_type][0:1] == 'C' -%}
+            {% set type_title = '<strong>Comment:</strong>' -%}
+            {% set style_search = 'com' -%}
+        {%- endif %}
+        <tr class="adv-search" onclick="window.location='{{ url_for('question_view', question_id=row[search_id], boolean="True") }}'">
+            <td class="adv-search {{ style_search }}">{{ type_title|safe }}<br>{{ highlight_phrase(phrase, row[search_txt], True)|safe }}</td>
+        </tr>
+    {%- endfor %}
+    </table>
 {% endblock %}
