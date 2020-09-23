@@ -23,6 +23,22 @@ class DatabaseTools:
         self.__close_connection()
         return result
 
+    def execute_multi_sql(self, query, data: list):
+        """ONLY FOR NOT RETURNING QUERY. DO NOT USE 'SELECT' AND 'RETURNING'\n
+        Argument "data" has to be a list of lists or a list of tuples.\n
+        Example: [['title1', 'question1'], ['title2', 'question2']]."""
+        if 'SELECT' not in query.upper() and 'RETURNING' not in query.upper():
+            if all([isinstance(el, (list, tuple)) for el in data] + [len(data) > 0]):
+                self.__connect_db()
+                for sql_data in data:
+                    if len(sql_data) > 0:
+                        self.__execute_query(query, sql_data)
+                self.__close_connection()
+            else:
+                print('Required data: a list of lists or a list of tuples!')
+        else:
+            print('Method "execute_multi_sql" ONLY FOR NOT RETURNING QUERY!')
+
     def __connect_db(self):
         try:
             self.__connection = connect(database=self.__db, user=self.__username, password=self.__password,
@@ -86,10 +102,11 @@ class DatabaseTools:
 
             """CREATE TABLE IF NOT EXISTS tag (
             id SERIAL PRIMARY KEY,
-            title VARCHAR ( 100 ) NOT NULL
+            title VARCHAR ( 100 ) NOT NULL UNIQUE
             )""",
 
             """CREATE TABLE IF NOT EXISTS question_tag (
+            id SERIAL PRIMARY KEY,
             question_id INT NOT NULL REFERENCES question ( id ) ON DELETE CASCADE,
             tag_id INT NOT NULL REFERENCES tag ( id ) ON DELETE CASCADE
             )"""
