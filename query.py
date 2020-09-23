@@ -70,7 +70,11 @@ __query_all = {
             SELECT comment.question_id, 'C' || comment.question_id, comment.message, comment.submission_time AS date
             FROM comment
             WHERE comment.message ILIKE %(search)s
-            ORDER BY date DESC"""
+            ORDER BY date DESC""",
+    'tag_select':
+        'SELECT id, title FROM tag ORDER BY title',
+    'question_tag_insert':
+        'INSERT INTO question_tag (question_id, tag_id) VALUES (%s, %s)'
 }
 
 

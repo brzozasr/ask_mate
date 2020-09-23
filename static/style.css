@@ -7,7 +7,7 @@ html {
 }
 
 body {
-    font-family: Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 #content {
@@ -384,4 +384,32 @@ a:link.btn_grey, a:visited.btn_grey, .btn_grey {
 a:hover.btn_grey, a:active.btn_grey, *:hover.btn_grey {
   background-color: black;
   color: white;
+}
+
+.tags {
+  max-width: 40vw;
+  min-width: 300px;
+  height: 80%;
+  margin: auto;
+  background: #f2f2f2;
+  border-radius: 4px;
+  padding: 10px;
+  border: 1px solid #0080ff;
+}
+
+.tag-fieldset {
+  max-width: 20vw;
+  min-width: 150px;
+  height: 70vh;
+  border: 1px solid #0080ff;
+  border-radius: 4px;
+  background: white;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+.tag-td {
+  padding-bottom: 6px;
+  padding-top: 6px;
+  text-align: left;
 }

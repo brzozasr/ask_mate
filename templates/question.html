@@ -24,7 +24,10 @@
 {% block content %}
     <h2 class="title">Question View</h2>
     <p><a class="btn_green" href="{{ url_for('question_list') }}">&lt;&lt; Back to questions</a></p>
-        {# Question -#}
+    {# Tags #}
+        <div><a href="{{ url_for('new_tag', question_id=q_id) }}">+ Tag</a>
+        </div>
+    {# Question -#}
         <div class="question">
             <p><small>Posted date: {{ q_date[:19] }}, Viewed: {{ question[q_view] }}, Answers: {{ answer_count[0][0] }}</small></p>
             <p><strong>{{ question[q_title] }}</strong><br>
