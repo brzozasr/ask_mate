@@ -1,0 +1,24 @@
+{% extends 'pattern.html' %}
+
+{% set t_id = 0 %}
+{% set t_title = 1 %}
+
+{% block title %}Tags{% endblock %}
+
+{% block content %}
+    <h2 class="title">Tags</h2>
+    <div class="tags">
+        <form action="{{ url_for('new_tag', question_id=question_id) }}" method="post">
+            <fieldset class="tag-fieldset">
+            <table>
+                {% for tag in tags -%}
+                <tr>
+                    <td class="tag-td"><label><input type="checkbox" name="{{ tag[t_id] }}" value="{{ tag[t_title] }}"> {{ tag[t_title] }}</label></td>
+                </tr>
+                {%- endfor %}
+            </table>
+            </fieldset>
+            <input class="btn" type="submit" value="Add tag(s)"><a href="{{ url_for('question_view', question_id=question_id, boolean="False") }}"><input class="btn" type="button" value="Cancel"></a>
+        </form>
+    </div>
+{% endblock %}

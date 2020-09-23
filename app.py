@@ -157,6 +157,21 @@ def search():
         return redirect(url_for('question_list'))
 
 
+@app.route('/question/<int:question_id>/new-tag', methods=['GET', 'POST'])
+def new_tag(question_id):
+    if request.method == 'POST':
+        tags_list = []
+        posted_tags = request.form.to_dict()
+        for tag_id in posted_tags.keys():
+            tags_list.append([question_id, int(tag_id)])
+
+        db.execute_multi_sql(query.question_tag_insert, tags_list)
+        return redirect(url_for('question_view', question_id=question_id, boolean=False))
+    else:
+        tags = db.execute_sql(query.tag_select)
+        return render_template('tags.html', question_id=question_id, tags=tags)
+
+
 @app.errorhandler(404)
 def page_not_found():
     return render_template('404.html'), 404
