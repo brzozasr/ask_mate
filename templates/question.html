@@ -29,7 +29,7 @@
     {# Tags #}
         <div class="tag-bar">
         {% for tag in tags -%}
-            <div>{{ tag[tag_title] }}&nbsp;&nbsp;<a class="del-tag" href="{{ url_for('tag_delete', question_id=q_id, tag_id=tag[qt_id]) }}">X</a></div>
+            <div>{{ tag[tag_title] }}&nbsp;&nbsp;<a class="del-tag" href="{{ url_for('tag_delete', question_id=q_id, tag_id=tag[qt_id]) }}" onclick="return confirm('Do you want to delete the tag named: {{ tag[tag_title] }}?');">X</a></div>
         {%- endfor %}
             <a class="add" href="{{ url_for('new_tag', question_id=q_id) }}">+ Add tag</a>
         </div>
