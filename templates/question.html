@@ -26,9 +26,9 @@
 {% block content %}
     <h2 class="title">Question View</h2>
     <p><a class="btn_green" href="{{ url_for('question_list') }}">&lt;&lt; Back to questions</a></p>
-    {# Tags #}
+    {# Tags -#}
         <div class="tag-bar">
-        {% for tag in tags -%}
+        {%- for tag in tags %}
             <div>{{ tag[tag_title] }}&nbsp;&nbsp;<a class="del-tag" href="{{ url_for('tag_delete', question_id=q_id, tag_id=tag[qt_id]) }}" onclick="return confirm('Do you want to delete the tag named: {{ tag[tag_title] }}?');">X</a></div>
         {%- endfor %}
             <a class="add" href="{{ url_for('new_tag', question_id=q_id) }}">+ Add tag</a>
