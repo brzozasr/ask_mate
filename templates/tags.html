@@ -8,17 +8,38 @@
 {% block content %}
     <h2 class="title">Tags</h2>
     <div class="tags">
+        <div>
         <form action="{{ url_for('new_tag', question_id=question_id) }}" method="post">
             <fieldset class="tag-fieldset">
             <table>
                 {% for tag in tags -%}
+                {% if tag[t_id] in add_tags -%}
+                <tr>
+                    <td class="tag-td"><label style="color: #999999"><input type="checkbox" name="{{ tag[t_id] }}" value="{{ tag[t_title] }}" disabled> {{ tag[t_title] }}</label></td>
+                </tr>
+                {%- else %}
                 <tr>
                     <td class="tag-td"><label><input type="checkbox" name="{{ tag[t_id] }}" value="{{ tag[t_title] }}"> {{ tag[t_title] }}</label></td>
                 </tr>
+                {% endif -%}
                 {%- endfor %}
             </table>
             </fieldset>
             <input class="btn" type="submit" value="Add tag(s)"><a href="{{ url_for('question_view', question_id=question_id, boolean="False") }}"><input class="btn" type="button" value="Cancel"></a>
         </form>
+        </div>
+        <div>
+            <form action="{{ url_for('new_tag', question_id=question_id) }}" method="get">
+                <input type="text" id="add-new-tag" name="add-new-tag" minlength="2" required>
+                <input class="btn" type="submit" value="Add new tag">
+            </form>
+        </div>
     </div>
+    {% with messages = get_flashed_messages() -%}
+        {% if messages -%}
+        {% for message in messages-%}
+    <p class="error txt_center">{{ message }}</p>
+        {%- endfor %}
+        {%- endif %}
+    {%- endwith %}
 {% endblock %}

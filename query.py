@@ -60,21 +60,32 @@ __query_all = {
         'UPDATE comment SET message = %s, submission_time = NOW(), edited_number = edited_number + 1 WHERE id = %s',
     'advanced_search':
         """SELECT question.id, 'Q' || question.id, question.title || ' ' || question.message, question.submission_time AS date
-            FROM question
-            WHERE question.title || ' ' || question.message ILIKE %(search)s
-            UNION
-            SELECT answer.question_id, 'A' || answer.question_id, answer.message, answer.submission_time AS date
-            FROM answer
-            WHERE answer.message ILIKE %(search)s
-            UNION
-            SELECT comment.question_id, 'C' || comment.question_id, comment.message, comment.submission_time AS date
-            FROM comment
-            WHERE comment.message ILIKE %(search)s
-            ORDER BY date DESC""",
+        FROM question
+        WHERE question.title || ' ' || question.message ILIKE %(search)s
+        UNION
+        SELECT answer.question_id, 'A' || answer.question_id, answer.message, answer.submission_time AS date
+        FROM answer
+        WHERE answer.message ILIKE %(search)s
+        UNION
+        SELECT comment.question_id, 'C' || comment.question_id, comment.message, comment.submission_time AS date
+        FROM comment
+        WHERE comment.message ILIKE %(search)s
+        ORDER BY date DESC""",
     'tag_select':
         'SELECT id, title FROM tag ORDER BY title',
     'question_tag_insert':
-        'INSERT INTO question_tag (question_id, tag_id) VALUES (%s, %s)'
+        'INSERT INTO question_tag (question_id, tag_id) VALUES (%s, %s)',
+    'question_tag_select_by_question_id':
+        'SELECT id, question_id, tag_id FROM question_tag WHERE question_id = %s',
+    'tag_insert':
+        'INSERT INTO tag (title) VALUES (%s)',
+    'tag_question_tag_select_by_question_id':
+    """SELECT question_tag.id, tag.title
+    FROM tag, question_tag
+    WHERE question_tag.tag_id = tag.id AND question_tag.question_id = %s
+    ORDER BY tag.title""",
+    'question_tag_delete_by_id':
+        'DELETE FROM question_tag WHERE id = %s'
 }
 
 
