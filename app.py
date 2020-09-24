@@ -7,6 +7,7 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(upload_file, url_prefix='/upload')
 app.jinja_env.globals.update(highlight_phrase=highlight_phrase)
+app.secret_key = b'secret_key!@#$%'
 
 
 @app.route('/')
@@ -33,12 +34,13 @@ def question_view(question_id, boolean="True"):
     if eval(boolean):
         db.execute_sql(query.question_update_view_number_by_id, [question_id])
 
+    tags = db.execute_sql(query.tag_question_tag_select_by_question_id, [question_id])
     answer_count = db.execute_sql(query.answer_count_fk_question_id, [question_id])
     question = db.execute_sql(query.question_select_by_id, [question_id])
     answer = db.execute_sql(query.answer_select_by_id, [question_id])
     comment = db.execute_sql(query.comment_select_by_question_id, [question_id])
     return render_template('question.html', question=question, answer=answer, comment=comment,
-                           answer_count=answer_count)
+                           answer_count=answer_count, tags=tags)
 
 
 @app.route('/vote/<element>/<int:question_id>/<int:value>/')
@@ -160,16 +162,35 @@ def search():
 @app.route('/question/<int:question_id>/new-tag', methods=['GET', 'POST'])
 def new_tag(question_id):
     if request.method == 'POST':
-        tags_list = []
         posted_tags = request.form.to_dict()
-        for tag_id in posted_tags.keys():
-            tags_list.append([question_id, int(tag_id)])
+        if len(posted_tags) > 0:
+            tags_list = []
+            for tag_id in posted_tags.keys():
+                tags_list.append([question_id, int(tag_id)])
 
-        db.execute_multi_sql(query.question_tag_insert, tags_list)
-        return redirect(url_for('question_view', question_id=question_id, boolean=False))
+            db.execute_multi_sql(query.question_tag_insert, tags_list)
+            return redirect(url_for('question_view', question_id=question_id, boolean=False))
+        else:
+            flash('To send the form you need to select at least one tag!')
+            return redirect(request.url)
+    elif (tag := request.args.get('add-new-tag')) is not None and len(tag) > 1:
+        error = db.execute_sql(query.tag_insert, [tag])
+        if error:
+            flash(error)
+        return redirect(url_for('new_tag', question_id=question_id))
     else:
+        list_add_tags = []
+        quest_tags = db.execute_sql(query.question_tag_select_by_question_id, [question_id])
+        for tag in quest_tags:
+            list_add_tags.append(tag[2])
         tags = db.execute_sql(query.tag_select)
-        return render_template('tags.html', question_id=question_id, tags=tags)
+        return render_template('tags.html', question_id=question_id, tags=tags, add_tags=list_add_tags)
+
+
+@app.route('/question/<int:question_id>/tag/<int:tag_id>/delete')
+def tag_delete(question_id, tag_id):
+    db.execute_sql(query.question_tag_delete_by_id, [tag_id])
+    return redirect(url_for('question_view', question_id=question_id, boolean=False))
 
 
 @app.errorhandler(404)

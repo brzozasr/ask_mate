@@ -10,7 +10,7 @@
         </div>
         <div>
             <form action="{{ url_for('search') }}">
-                <input class="search" type="text" id="search" name="search" minlength="2"><input class="btn" type="submit" value="Search"><br>
+                <input class="search" type="text" id="search" name="search" minlength="2" required><input class="btn" type="submit" value="Search"><br>
                 <label><input type="checkbox" id="advanced_search" name="advanced_search"> advanced search</label>
             </form>
         </div>

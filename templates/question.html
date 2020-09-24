@@ -21,11 +21,17 @@
 {% set c_message = 3 %}
 {% set c_date_sub = 4 %}
 {% set c_edited_no = 5 %}
+{% set qt_id = 0 %}
+{% set tag_title = 1 %}
 {% block content %}
     <h2 class="title">Question View</h2>
     <p><a class="btn_green" href="{{ url_for('question_list') }}">&lt;&lt; Back to questions</a></p>
     {# Tags #}
-        <div><a href="{{ url_for('new_tag', question_id=q_id) }}">+ Tag</a>
+        <div class="tag-bar">
+        {% for tag in tags -%}
+            <div>{{ tag[tag_title] }}&nbsp;&nbsp;<a class="del-tag" href="{{ url_for('tag_delete', question_id=q_id, tag_id=tag[qt_id]) }}">X</a></div>
+        {%- endfor %}
+            <a class="add" href="{{ url_for('new_tag', question_id=q_id) }}">+ Add tag</a>
         </div>
     {# Question -#}
         <div class="question">

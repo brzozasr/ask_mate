@@ -48,14 +48,18 @@ class DatabaseTools:
             print(f'There is a problem with connection: {e}')
 
     def __execute_query(self, query, data=None):
+        error = None
         try:
             self.__cursor.execute(query, data)
             if 'SELECT' in str(self.__cursor.query).upper() or 'RETURNING' in str(self.__cursor.query).upper():
                 return self.__cursor.fetchall()
         except (Error, OperationalError) as e:
             print(f'There is a problem with operation: {e}')
+            error = str(e)
         finally:
             self.__connection.commit()
+            if error is not None:
+                return f'There is a problem with operation: {error}'
 
     def __close_connection(self):
         try:
@@ -108,7 +112,8 @@ class DatabaseTools:
             """CREATE TABLE IF NOT EXISTS question_tag (
             id SERIAL PRIMARY KEY,
             question_id INT NOT NULL REFERENCES question ( id ) ON DELETE CASCADE,
-            tag_id INT NOT NULL REFERENCES tag ( id ) ON DELETE CASCADE
+            tag_id INT NOT NULL REFERENCES tag ( id ) ON DELETE CASCADE,
+            UNIQUE ( question_id, tag_id )
             )"""
         )
 
