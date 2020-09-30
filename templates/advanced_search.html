@@ -10,6 +10,11 @@
     <h2 class="title">Advanced Search</h2>
     <p><a class="btn_green" href="{{ url_for('question_list') }}">&lt;&lt; Back to questions</a></p>
     <table class="adv-search">
+    {% if adv_search|length == 0 -%}
+        <tr>
+            <td><p class="txt_left">The search phrase "<strong>{{ phrase }}</strong>" could not be found.</p></td>
+        </tr>
+    {%- endif %}
     {% for row in adv_search -%}
         {% if row[search_type][0:1] == 'Q' -%}
             {% set type_title = '<strong>Question:</strong>' -%}
