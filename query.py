@@ -92,7 +92,13 @@ __query_all = {
     WHERE question_tag.tag_id = tag.id AND question_tag.question_id = %s
     ORDER BY tag.title""",
     'question_tag_delete_by_id':
-        'DELETE FROM question_tag WHERE id = %s'
+        'DELETE FROM question_tag WHERE id = %s',
+    'comment_delete':
+        'DELETE FROM comment WHERE id = %s RETURNING question_id',
+    'answer_update_by_id':
+        'UPDATE answer SET message = %s WHERE id = %s',
+    'answer_select_message_by_id':
+        'SELECT message FROM answer WHERE id = %s'
 }
 
 

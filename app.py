@@ -6,7 +6,7 @@ from upload_file import *
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(upload_file, url_prefix='/upload')
-app.jinja_env.globals.update(highlight_phrase=highlight_phrase)
+app.jinja_env.globals.update(highlight_phrase=highlight_phrase, is_list=is_list)
 app.secret_key = b'secret_key!@#$%'
 
 
@@ -72,14 +72,21 @@ def add_question():
         return render_template('add_edit_question.html')
 
 
-@app.route('/question/<int:question_id>/new_answer', methods=['GET', 'POST'])
-def new_answer(question_id):
+@app.route('/question/<int:question_id>/new_answer', endpoint='add_answer', methods=['GET', 'POST'])
+@app.route('/answer/<int:question_id>/<int:answer_id>/edit', endpoint='edit_answer', methods=['GET', 'POST'])
+def new_answer(question_id, answer_id=None):
     if request.method == 'POST':
         answer = request.form['answer']
-        db.execute_sql(query.answer_insert, [question_id, answer])
-        return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        if request.endpoint == 'add_answer':
+            db.execute_sql(query.answer_insert, [question_id, answer])
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        elif request.endpoint == 'edit_answer':
+            db.execute_sql(query.answer_update_by_id, [answer, answer_id])
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
     else:
-        return render_template('new_answer.html', question_id=question_id)
+        answer_txt = db.execute_sql(query.answer_select_message_by_id, [answer_id])
+        return render_template('new_answer.html', question_id=question_id, answer_id=answer_id,
+                               answer_txt=answer_txt)
 
 
 @app.route('/question/<int:question_id>/new-comment', endpoint='comment_question', methods=['GET', 'POST'])
@@ -103,6 +110,12 @@ def add_comment(question_id, answer_id=None, comment_id=None):
         comment = db.execute_sql(query.comment_select_by_comment_id, [comment_id])
         return render_template('form_comment.html', question_id=question_id, answer_id=answer_id, comment_id=comment_id,
                                comment=comment)
+
+
+@app.route('/comments/<int:comment_id>/delete')
+def del_comment(comment_id):
+    quest_id = db.execute_sql(query.comment_delete, [comment_id])
+    return redirect(url_for('question_view', question_id=quest_id[0][0], boolean="False"))
 
 
 @app.route('/question/<int:question_id>/delete')
@@ -154,7 +167,7 @@ def search():
         query_phrase = f'%{phrase}%'
         question_search = db.execute_sql(query.questions_search, {'search': query_phrase})
         cols_to_show = {'Date': 1, 'View': 2, 'Vote': 3, 'Title': 4, 'Question': 5}
-        return render_template('search.html', search=question_search, cols=cols_to_show)
+        return render_template('search.html', search=question_search, cols=cols_to_show, phrase=phrase)
     elif request.args.get('advanced_search') == 'on':
         phrase = request.args.get('search')
         query_phrase = f'%{phrase}%'
@@ -178,7 +191,7 @@ def new_tag(question_id):
         else:
             flash('To send the form you need to select at least one tag!')
             return redirect(request.url)
-    elif (tag := request.args.get('add-new-tag')) is not None and len(tag) > 1:
+    elif (tag := request.args.get('add-new-tag')) is not None and len(tag) > 0:
         error = db.execute_sql(query.tag_insert, [tag])
         if error:
             flash(error)
