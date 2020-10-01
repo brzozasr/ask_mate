@@ -191,7 +191,7 @@ def new_tag(question_id):
         else:
             flash('To send the form you need to select at least one tag!')
             return redirect(request.url)
-    elif (tag := request.args.get('add-new-tag')) is not None and len(tag) > 1:
+    elif (tag := request.args.get('add-new-tag')) is not None and len(tag) > 0:
         error = db.execute_sql(query.tag_insert, [tag])
         if error:
             flash(error)
