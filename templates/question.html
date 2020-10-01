@@ -66,6 +66,7 @@
                 <div class="inner">
                     <div>
                         <a class="edit" href="{{ url_for('comment_edit', question_id=q_id, comment_id=c_line[c_id]) }}">&plusmn; Edit comment</a>
+                        <a class="del" href="{{ url_for('del_comment', comment_id=c_line[c_id]) }}" onclick="return confirm('Do you want to delete the comment?');">- Delete comment</a>
                     </div>
                 </div>
             </div>
@@ -104,6 +105,7 @@
                 <div class="inner">
                     <div>
                         <a class="edit" href="{{ url_for('comment_edit', question_id=q_id, comment_id=c_line[c_id]) }}">&plusmn; Edit comment</a>
+                        <a class="del" href="{{ url_for('del_comment', comment_id=c_line[c_id]) }}" onclick="return confirm('Do you want to delete the comment?');">- Delete comment</a>
                     </div>
                 </div>
             </div>

@@ -105,6 +105,12 @@ def add_comment(question_id, answer_id=None, comment_id=None):
                                comment=comment)
 
 
+@app.route('/comments/<int:comment_id>/delete')
+def del_comment(comment_id):
+    quest_id = db.execute_sql(query.comment_delete, [comment_id])
+    return redirect(url_for('question_view', question_id=quest_id[0][0], boolean="False"))
+
+
 @app.route('/question/<int:question_id>/delete')
 def delete_question(question_id):
     list_img = []
