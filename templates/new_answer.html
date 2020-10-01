@@ -1,12 +1,25 @@
 {% extends 'pattern.html' %}
-{% block title %}Add an answer{% endblock %}
+
+{% set message_txt = '' %}
+{% if request.endpoint == 'add_answer' %}
+    {% set title_page = 'Add an answer' %}
+    {% set form_url = url_for('add_answer', question_id=question_id) %}
+    {% set btn_txt = 'Add' %}
+{% elif request.endpoint == 'edit_answer' %}
+    {% set title_page = 'Edit an answer' %}
+    {% set form_url = url_for('edit_answer', question_id=question_id, answer_id=answer_id) %}
+    {% set message_txt = answer_txt[0] %}
+    {% set btn_txt = 'Edit' %}
+{% endif %}
+
+{% block title %}{{ title_page }}{% endblock %}
 
 {% block content %}
-    <h2 class="title">Add an answer</h2>
-    <form class="center" action="{{ url_for('new_answer', question_id=question_id) }}" method="post">
+    <h2 class="title">{{ title_page }}</h2>
+    <form class="center" action="{{ form_url }}" method="post">
         <label for="answer">Answer:</label><br>
-        <textarea id="answer" name="answer" rows="4" cols="50" placeholder="Write an answer" required></textarea><br>
+        <textarea id="answer" name="answer" rows="4" cols="50" placeholder="Write an answer" required>{{ message_txt[0] }}</textarea><br>
         <br>
-        <input class="btn" type="submit" value="Add" name="sub_button"><a href="{{ url_for('question_view', question_id=question_id, boolean="False") }}"><input class="btn" type="button" value="Cancel"></a>
+        <input class="btn" type="submit" value="{{ btn_txt }}" name="sub_button"><a href="{{ url_for('question_view', question_id=question_id, boolean="False") }}"><input class="btn" type="button" value="Cancel"></a>
     </form>
 {% endblock %}
