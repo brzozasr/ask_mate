@@ -20,6 +20,8 @@ __query_all = {
         'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question ORDER BY message DESC',
     'question_select_all_asc_by_question':
         'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question ORDER BY message ASC',
+    'question_select_limit_5_desc_by_date':
+        'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question ORDER BY submission_time DESC LIMIT 5',
     'question_select_by_id':
         'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question WHERE id = %s',
     'question_update_view_number_by_id':

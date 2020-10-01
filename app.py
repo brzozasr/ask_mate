@@ -12,7 +12,9 @@ app.secret_key = b'secret_key!@#$%'
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    last_5 = db.execute_sql(query.question_select_limit_5_desc_by_date)
+    cols_to_show = {'Date': 1, 'View': 2, 'Vote': 3, 'Title': 4, 'Question': 5}
+    return render_template('index.html', last_5=last_5, cols=cols_to_show)
 
 
 @app.route('/list')
