@@ -30,6 +30,7 @@
         </div>
         <div>
             <form action="{{ url_for('new_tag', question_id=question_id) }}" method="get">
+                <label for="add-new-tag">New tag name:</label>
                 <input type="text" id="add-new-tag" name="add-new-tag" minlength="2" required>
                 <input class="btn" type="submit" value="Add new tag">
             </form>

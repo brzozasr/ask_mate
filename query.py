@@ -20,6 +20,8 @@ __query_all = {
         'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question ORDER BY message DESC',
     'question_select_all_asc_by_question':
         'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question ORDER BY message ASC',
+    'question_select_limit_5_desc_by_date':
+        'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question ORDER BY submission_time DESC LIMIT 5',
     'question_select_by_id':
         'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question WHERE id = %s',
     'question_update_view_number_by_id':
@@ -71,6 +73,11 @@ __query_all = {
         FROM comment
         WHERE comment.message ILIKE %(search)s
         ORDER BY date DESC""",
+    'questions_search':
+        """SELECT DISTINCT q.id, q.submission_time, q.view_number, q.vote_number, q.title, q.message, q.image
+        FROM question q, answer a
+        WHERE q.title ILIKE %(search)s OR q.message ILIKE %(search)s OR (q.id = a.question_id AND a.message ILIKE %(search)s)
+        ORDER BY q.submission_time DESC""",
     'tag_select':
         'SELECT id, title FROM tag ORDER BY title',
     'question_tag_insert':
