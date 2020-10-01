@@ -5,6 +5,7 @@
 {% block content %}
     <h2 class="title">Search</h2>
     <p><a class="btn_green" href="{{ url_for('question_list') }}"><< Back to questions</a></p>
+    {% if is_list(search) and search|length > 0 -%}
     <table class="center">
         <thead>
             <tr>
@@ -32,5 +33,7 @@
             {% endfor -%}
         </tbody>
     </table>
-
+    {% else %}
+    <p>The search phrase "<strong>{{ phrase }}</strong>" could not be found.</p>
+    {%- endif %}
 {% endblock %}

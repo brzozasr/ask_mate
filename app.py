@@ -6,7 +6,7 @@ from upload_file import *
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(upload_file, url_prefix='/upload')
-app.jinja_env.globals.update(highlight_phrase=highlight_phrase)
+app.jinja_env.globals.update(highlight_phrase=highlight_phrase, is_list=is_list)
 app.secret_key = b'secret_key!@#$%'
 
 
@@ -154,7 +154,7 @@ def search():
         query_phrase = f'%{phrase}%'
         question_search = db.execute_sql(query.questions_search, {'search': query_phrase})
         cols_to_show = {'Date': 1, 'View': 2, 'Vote': 3, 'Title': 4, 'Question': 5}
-        return render_template('search.html', search=question_search, cols=cols_to_show)
+        return render_template('search.html', search=question_search, cols=cols_to_show, phrase=phrase)
     elif request.args.get('advanced_search') == 'on':
         phrase = request.args.get('search')
         query_phrase = f'%{phrase}%'

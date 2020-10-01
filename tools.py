@@ -61,3 +61,10 @@ def highlight_phrase(phrase, text, short=False):
             if i == occurrence - 1:
                 txt += text[cursor:length_txt]
     return txt
+
+
+def is_list(to_check):
+    if type(to_check) == list:
+        return True
+    else:
+        return False
