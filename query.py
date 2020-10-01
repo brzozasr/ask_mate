@@ -94,7 +94,11 @@ __query_all = {
     'question_tag_delete_by_id':
         'DELETE FROM question_tag WHERE id = %s',
     'comment_delete':
-        'DELETE FROM comment WHERE id = %s RETURNING question_id'
+        'DELETE FROM comment WHERE id = %s RETURNING question_id',
+    'answer_update_by_id':
+        'UPDATE answer SET message = %s WHERE id = %s',
+    'answer_select_message_by_id':
+        'SELECT message FROM answer WHERE id = %s'
 }
 
 

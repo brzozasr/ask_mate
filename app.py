@@ -72,14 +72,21 @@ def add_question():
         return render_template('add_edit_question.html')
 
 
-@app.route('/question/<int:question_id>/new_answer', methods=['GET', 'POST'])
-def new_answer(question_id):
+@app.route('/question/<int:question_id>/new_answer', endpoint='add_answer', methods=['GET', 'POST'])
+@app.route('/answer/<int:question_id>/<int:answer_id>/edit', endpoint='edit_answer', methods=['GET', 'POST'])
+def new_answer(question_id, answer_id=None):
     if request.method == 'POST':
         answer = request.form['answer']
-        db.execute_sql(query.answer_insert, [question_id, answer])
-        return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        if request.endpoint == 'add_answer':
+            db.execute_sql(query.answer_insert, [question_id, answer])
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        elif request.endpoint == 'edit_answer':
+            db.execute_sql(query.answer_update_by_id, [answer, answer_id])
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
     else:
-        return render_template('new_answer.html', question_id=question_id)
+        answer_txt = db.execute_sql(query.answer_select_message_by_id, [answer_id])
+        return render_template('new_answer.html', question_id=question_id, answer_id=answer_id,
+                               answer_txt=answer_txt)
 
 
 @app.route('/question/<int:question_id>/new-comment', endpoint='comment_question', methods=['GET', 'POST'])
