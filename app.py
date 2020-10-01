@@ -150,8 +150,11 @@ def edit_question(question_id):
 @app.route('/search')
 def search():
     if request.args.get('advanced_search') is None:
-        # TODO task: Search questions. Implement searching in questions and answers.
-        return render_template('search.html')
+        phrase = request.args.get('search')
+        query_phrase = f'%{phrase}%'
+        question_search = db.execute_sql(query.questions_search, {'search': query_phrase})
+        cols_to_show = {'Date': 1, 'View': 2, 'Vote': 3, 'Title': 4, 'Question': 5}
+        return render_template('search.html', search=question_search, cols=cols_to_show)
     elif request.args.get('advanced_search') == 'on':
         phrase = request.args.get('search')
         query_phrase = f'%{phrase}%'
