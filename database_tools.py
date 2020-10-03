@@ -71,6 +71,14 @@ class DatabaseTools:
         % db._DatabaseTools__create_db_tables()
         % exit()"""
         tables = (
+            """CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR ( 255 ) NOT NULL UNIQUE,
+            pwd VARCHAR ( 255 ) NOT NULL,
+            registration_time TIMESTAMP NOT NULL DEFAULT NOW(),
+            reputation INT NOT NULL DEFAULT 0
+            )""",
+
             """CREATE TABLE IF NOT EXISTS question (
             id SERIAL PRIMARY KEY,
             submission_time TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -78,7 +86,8 @@ class DatabaseTools:
             vote_number INT NOT NULL DEFAULT 0,
             title VARCHAR ( 255 ) NOT NULL,
             message TEXT NOT NULL,
-            image VARCHAR ( 255 ) UNIQUE
+            image VARCHAR ( 255 ) UNIQUE,
+            user_id INT NOT NULL REFERENCES users ( id ) ON DELETE CASCADE
             )""",
 
             """CREATE TABLE IF NOT EXISTS answer (
@@ -87,7 +96,9 @@ class DatabaseTools:
             vote_number INT NOT NULL DEFAULT 0,
             question_id INT NOT NULL REFERENCES question ( id ) ON DELETE CASCADE,
             message TEXT NOT NULL,
-            image VARCHAR ( 255 ) UNIQUE
+            image VARCHAR ( 255 ) UNIQUE,
+            user_id INT NOT NULL REFERENCES users ( id ) ON DELETE CASCADE,
+            acceptance BOOLEAN NOT NULL DEFAULT FALSE
             )""",
 
             """CREATE TABLE IF NOT EXISTS comment (
@@ -96,7 +107,8 @@ class DatabaseTools:
             answer_id INT REFERENCES answer ( id ) ON DELETE CASCADE,
             message TEXT NOT NULL,
             submission_time TIMESTAMP NOT NULL DEFAULT NOW(),
-            edited_number INT NOT NULL DEFAULT 0
+            edited_number INT NOT NULL DEFAULT 0,
+            user_id INT NOT NULL REFERENCES users ( id ) ON DELETE CASCADE
             )""",
 
             """CREATE TABLE IF NOT EXISTS tag (
