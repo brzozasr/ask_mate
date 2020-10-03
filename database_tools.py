@@ -1,19 +1,14 @@
 from psycopg2 import *
+from config_sql import *
 
 
 class DatabaseTools:
-    __config_db = {'db': 'ask_mate',
-                   'user': 'postgres',
-                   'password': 'brzozasr',
-                   'host': 'localhost',
-                   'port': '5432'}
-
     def __init__(self):
-        self.__db = self.__config_db['db']
-        self.__username = self.__config_db['user']
-        self.__password = self.__config_db['password']
-        self.__host = self.__config_db['host']
-        self.__port = self.__config_db['port']
+        self.__db = DB_NAME
+        self.__username = DB_USER
+        self.__password = DB_PASSWORD
+        self.__host = DB_HOST
+        self.__port = DB_PORT
         self.__cursor = None
         self.__connection = None
 
