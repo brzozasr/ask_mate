@@ -22,13 +22,30 @@ body {
   flex-direction: row;
   padding: 5px 5px;
   margin-bottom: 5px;
-  border: 1px solid black;
 }
 
 #top-bar > div {
-  width: 100px;
   text-align: center;
-  border: 1px solid black;
+}
+
+.logo {
+  font-size: 45px;
+  color: #0146f3;
+  font-weight: bold;
+  padding: 0 3px 0 3px;
+}
+
+.logo.blue {
+  color: #001dae;
+}
+
+.logo.sm {
+  font-size: 35px;
+}
+
+.logo.border {
+  border: 2px #001dae;
+  border-style: dotted dashed dotted dashed;
 }
 
 table {
