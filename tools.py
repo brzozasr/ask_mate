@@ -1,5 +1,6 @@
 from query import *
 from query import __query_all as qu
+import re
 
 
 def get_sort_query(sort=None, column=None):
@@ -65,6 +66,21 @@ def highlight_phrase(phrase, text, short=False):
 
 def is_list(to_check):
     if type(to_check) == list:
+        return True
+    else:
+        return False
+
+
+def is_email_correct(email):
+    regex = r'^[a-z0-9]+[\._-]?[a-z0-9]+[@]\w+[-]?\w+[.]?\w+[.]\w+$'
+    if re.fullmatch(regex, email):
+        return True
+    else:
+        return False
+
+
+def is_same_pwp(first, second):
+    if first == second:
         return True
     else:
         return False

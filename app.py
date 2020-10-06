@@ -2,12 +2,14 @@ from flask import Flask
 
 from tools import *
 from upload_file import *
+from os import urandom
+import bcrypt
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(upload_file, url_prefix='/upload')
 app.jinja_env.globals.update(highlight_phrase=highlight_phrase, is_list=is_list)
-app.secret_key = b'secret_key!@#$%'
+app.secret_key = urandom(64)
 
 
 @app.route('/')
@@ -209,6 +211,41 @@ def new_tag(question_id):
 def tag_delete(question_id, tag_id):
     db.execute_sql(query.question_tag_delete_by_id, [tag_id])
     return redirect(url_for('question_view', question_id=question_id, boolean=False))
+
+
+@app.route('/sign_up', methods=['GET', 'POST'])
+def sign_up():
+    if request.method == 'POST':
+        email = request.form['log-email']
+        first_pwd = request.form['first-pwd']
+        second_pwd = request.form['second-pwd']
+        if not is_email_correct(email):
+            error = {'email': 'Invalid email address!'}
+            return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
+        elif not is_same_pwp(first_pwd, second_pwd):
+            error = {'pass': 'Passwords must be the same!'}
+            return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
+        else:
+            pwd = bcrypt.hashpw(first_pwd.encode('utf-8'), bcrypt.gensalt())
+            error_txt = db.execute_sql(query.user_registration, [email, pwd])
+            if error_txt:
+                error = {'db_error': str(error_txt)}
+                return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
+            else:
+                info = 'You have been successfully registered'
+                return render_template('sign_up.html', info=info)
+    else:
+        return render_template('sign_up.html')
+
+
+@app.route('/sign_in')
+def sign_in():
+    return render_template('sign_in.html')
+
+
+@app.route('/user/<int:user_id>')
+def user_page(user_id):
+    return render_template('user_page.html')
 
 
 @app.errorhandler(404)
