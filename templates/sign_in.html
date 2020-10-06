@@ -1,0 +1,29 @@
+{% extends 'pattern.html' %}
+{% block title %}Sign in{% endblock %}
+
+{% block content %}
+    {% if not info %}
+    <h2 class="title">Sign in</h2>
+    <form class="center" action="{{ url_for('sign_up') }}" method="post">
+        <label for="log-email">Address Email:</label><br>
+        {% if 'email' in error -%}
+            <span class="error">{{ error['email'] }}</span>
+        {%- endif  %}
+        <input type="email" id="log-email" name="log-email" placeholder="Write address email" value="{{ email }}" required><br>
+        <br>
+        <label for="first-pwd">Password:</label><br>
+        {% if 'pass' in error -%}
+            <span class="error">{{ error['pass'] }}</span>
+        {%- endif  %}
+        <input type="password" id="pwd" name="pwd" placeholder="Write password" value="{{ first_pwd }}" minlength="6" required><br>
+        <br>
+        <input class="btn" type="submit" value="Sign in">
+        {% if 'db_error' in error -%}
+            <br><span class="error">{{ error['db_error'] }}</span>
+        {%- endif  %}
+    </form>
+    {% else %}
+    <h2 class="title">{{ info }}</h2>
+    <p style="text-align: center; margin: auto"><a class="btn_green" href="{{ url_for('sign_in') }}">Go to sign in page</a></p>
+    {% endif %}
+{% endblock %}

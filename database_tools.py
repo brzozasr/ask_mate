@@ -181,7 +181,9 @@ class DatabaseTools:
         self.__connect_db(username=DatabaseTools.pg_username, pwd=DatabaseTools.pg_password)
         for table in tables:
             self.__execute_query(table)
+        self.__execute_query(f"GRANT ALL ON SCHEMA public TO {DatabaseTools.us_username}")
         self.__execute_query(f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {DatabaseTools.us_username}")
+        self.__execute_query(f"GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO {DatabaseTools.us_username}")
         self.__close_connection()
 
 
