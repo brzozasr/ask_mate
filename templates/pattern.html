@@ -15,14 +15,20 @@
             <div class="logo border">
                 A<span class="logo sm">SK</span><span class="logo blue">M<span class="logo sm blue">ATE</span></span>
             </div>
-            <div>Signed in as <strong>brzozasr@gmail.com</strong></div>
+            {% if session[user_id] and session[user_email] -%}
+            <div style="color: #000099">Signed in as <strong>{{ session[user_email] }}</strong></div>
+            {%- endif %}
         </div>
         <div id="myLinks">
             <a href="{{ url_for('index') }}">Home page</a>
             <a href="{{ url_for('question_list') }}">Questions' list</a>
             <hr class="separator">
+            {% if session[user_id] and session[user_email] -%}
+            <a href="{{ url_for('sign_out') }}">Sign out</a>
+            {% else %}
             <a href="{{ url_for('sign_in') }}">Sign in</a>
             <a href="{{ url_for('sign_up') }}">Sign up</a>
+            {%- endif %}
         </div>
         <a href="javascript:void(0);" class="icon" onclick="myFunction()">
             <i class="fa fa-bars"></i>

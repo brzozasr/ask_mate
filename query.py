@@ -99,8 +99,10 @@ __query_all = {
         'UPDATE answer SET message = %s WHERE id = %s',
     'answer_select_message_by_id':
         'SELECT message FROM answer WHERE id = %s',
-    'user_registration':
+    'users_registration':
         'INSERT INTO users (email, pwd) VALUES (%s, %s)',
+    'users_select_by_email':
+        'SELECT id, email, pwd FROM users WHERE email = %s',
 }
 
 

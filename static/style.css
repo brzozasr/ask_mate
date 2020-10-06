@@ -77,11 +77,11 @@ body {
 
 .top-bar > div {
   text-align: center;
-  line-height: 40px;
+  line-height: 35px;
 }
 
 .logo {
-  font-size: 40px;
+  font-size: 35px;
   color: #1d880f;
   font-weight: bold;
   padding: 0 3px 0 3px;

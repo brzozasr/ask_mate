@@ -1,15 +1,24 @@
-from flask import Flask
+from os import urandom
+
+import bcrypt
+from flask import Flask, session
 
 from tools import *
 from upload_file import *
-from os import urandom
-import bcrypt
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(upload_file, url_prefix='/upload')
 app.jinja_env.globals.update(highlight_phrase=highlight_phrase, is_list=is_list)
 app.secret_key = urandom(64)
+
+USER_ID = 'user_id'
+USER_EMAIL = 'user_email'
+
+
+@app.context_processor
+def inject_global():
+    return dict(user_id=USER_ID, user_email=USER_EMAIL)
 
 
 @app.route('/')
@@ -221,26 +230,55 @@ def sign_up():
         second_pwd = request.form['second-pwd']
         if not is_email_correct(email):
             error = {'email': 'Invalid email address!'}
-            return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
+            return redirect(url_for('sign_up', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error))
         elif not is_same_pwp(first_pwd, second_pwd):
             error = {'pass': 'Passwords must be the same!'}
-            return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
+            return redirect(url_for('sign_up', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error))
         else:
-            pwd = bcrypt.hashpw(first_pwd.encode('utf-8'), bcrypt.gensalt())
-            error_txt = db.execute_sql(query.user_registration, [email, pwd])
+            pwd_hash = bcrypt.hashpw(first_pwd.encode('utf-8'), bcrypt.gensalt())
+            error_txt = db.execute_sql(query.users_registration, [email, pwd_hash.decode('utf-8')])
             if error_txt:
                 error = {'db_error': str(error_txt)}
-                return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
+                return redirect(url_for('sign_up', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error))
             else:
                 info = 'You have been successfully registered'
-                return render_template('sign_up.html', info=info)
+                return redirect(url_for('sign_up', info=info))
     else:
         return render_template('sign_up.html')
 
 
-@app.route('/sign_in')
+@app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
-    return render_template('sign_in.html')
+    if request.method == 'POST':
+        user_name = request.form['user-name']
+        log_pwd = request.form['log-pwd']
+        log_data = db.execute_sql(query.users_select_by_email, [user_name])
+        if log_data and type(log_data) == list and len(log_data) == 1:
+            user_data = {}
+            dict_key = [USER_ID, USER_EMAIL, 'user_pwd']
+            i = 0
+            for data in log_data[0]:
+                user_data[dict_key[i]] = data
+                i += 1
+            if user_name == user_data[USER_EMAIL] and bcrypt.checkpw(log_pwd.encode('utf-8'), user_data['user_pwd'].encode('utf-8')):
+                session[USER_ID] = user_data[USER_ID]
+                session[USER_EMAIL] = user_data[USER_EMAIL]
+                return redirect(url_for('index'))
+            else:
+                error = {'log_error': 'Invalid email address or password!'}
+                return redirect(url_for('sign_in', error=error))
+        else:
+            error = {'db_error': str(log_data)}
+            return redirect(url_for('sign_in', error=error))
+    else:
+        return render_template('sign_in.html')
+
+
+@app.route('/sign_out')
+def sign_out():
+    session.pop(USER_ID, None)
+    session.pop(USER_EMAIL, None)
+    return redirect(url_for('index'))
 
 
 @app.route('/user/<int:user_id>')
