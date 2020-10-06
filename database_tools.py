@@ -1,14 +1,25 @@
 from psycopg2 import *
-from config_sql import *
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from config import *
 
 
 class DatabaseTools:
+    pg_db = PG_DB
+    pg_username = PG_USERNAME
+    pg_password = PG_PASSWORD
+    pg_host = PG_HOST
+    pg_port = PG_PORT
+
+    us_db = US_DB
+    us_username = US_USERNAME
+    us_password = US_PASSWORD
+
     def __init__(self):
-        self.__db = DB_NAME
-        self.__username = DB_USER
-        self.__password = DB_PASSWORD
-        self.__host = DB_HOST
-        self.__port = DB_PORT
+        self.__db_name = DatabaseTools.us_db
+        self.__username = DatabaseTools.us_username
+        self.__password = DatabaseTools.us_password
+        self.__host = DatabaseTools.pg_host
+        self.__port = DatabaseTools.pg_port
         self.__cursor = None
         self.__connection = None
 
@@ -34,15 +45,17 @@ class DatabaseTools:
         else:
             print('Method "execute_multi_sql" ONLY FOR NOT RETURNING QUERY!')
 
-    def __connect_db(self):
+    def __connect_db(self, dbname=us_db, username=us_username, pwd=us_password):
         try:
-            self.__connection = connect(database=self.__db, user=self.__username, password=self.__password,
+            self.__connection = connect(database=dbname, user=username, password=pwd,
                                         host=self.__host, port=self.__port)
             self.__cursor = self.__connection.cursor()
         except Error as e:
             print(f'There is a problem with connection: {e}')
 
     def __execute_query(self, query, data=None):
+        """Execute query with a transaction (with commit).
+        Use this for INSERT, UPDATE, DELETE."""
         error = None
         try:
             self.__cursor.execute(query, data)
@@ -64,13 +77,21 @@ class DatabaseTools:
             print(f'There is a problem with closing database: {e}')
 
     def __create_db_tables(self):
-        """Creating tables in ask_mate database - PostgreSQL.
-        Commands to create tables in the IDE terminal:
+        """Creating database, tables and a user in PostgreSQL.
+        Commands to create database, tables and a user in the IDE terminal:
         % python3
         % from database_tools import *
         % db._DatabaseTools__create_db_tables()
         % exit()"""
         tables = (
+            """CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR ( 255 ) NOT NULL UNIQUE,
+            pwd VARCHAR ( 255 ) NOT NULL,
+            registration_time TIMESTAMP NOT NULL DEFAULT NOW(),
+            reputation INT NOT NULL DEFAULT 0
+            )""",
+
             """CREATE TABLE IF NOT EXISTS question (
             id SERIAL PRIMARY KEY,
             submission_time TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -78,7 +99,8 @@ class DatabaseTools:
             vote_number INT NOT NULL DEFAULT 0,
             title VARCHAR ( 255 ) NOT NULL,
             message TEXT NOT NULL,
-            image VARCHAR ( 255 ) UNIQUE
+            image VARCHAR ( 255 ) UNIQUE,
+            user_id INT NOT NULL REFERENCES users ( id ) ON DELETE CASCADE
             )""",
 
             """CREATE TABLE IF NOT EXISTS answer (
@@ -87,7 +109,9 @@ class DatabaseTools:
             vote_number INT NOT NULL DEFAULT 0,
             question_id INT NOT NULL REFERENCES question ( id ) ON DELETE CASCADE,
             message TEXT NOT NULL,
-            image VARCHAR ( 255 ) UNIQUE
+            image VARCHAR ( 255 ) UNIQUE,
+            user_id INT NOT NULL REFERENCES users ( id ) ON DELETE CASCADE,
+            acceptance BOOLEAN NOT NULL DEFAULT FALSE
             )""",
 
             """CREATE TABLE IF NOT EXISTS comment (
@@ -96,7 +120,8 @@ class DatabaseTools:
             answer_id INT REFERENCES answer ( id ) ON DELETE CASCADE,
             message TEXT NOT NULL,
             submission_time TIMESTAMP NOT NULL DEFAULT NOW(),
-            edited_number INT NOT NULL DEFAULT 0
+            edited_number INT NOT NULL DEFAULT 0,
+            user_id INT NOT NULL REFERENCES users ( id ) ON DELETE CASCADE
             )""",
 
             """CREATE TABLE IF NOT EXISTS tag (
@@ -112,9 +137,53 @@ class DatabaseTools:
             )"""
         )
 
-        self.__connect_db()
+        create_db = f"""CREATE DATABASE {DatabaseTools.us_db}
+                    WITH 
+                    OWNER = postgres
+                    ENCODING = 'UTF8'
+                    CONNECTION LIMIT = -1;"""
+
+        create_user = f"""CREATE ROLE {DatabaseTools.us_username} WITH
+                    LOGIN
+                    NOSUPERUSER
+                    NOCREATEDB
+                    NOCREATEROLE
+                    NOINHERIT
+                    NOREPLICATION
+                    CONNECTION LIMIT -1
+                    PASSWORD '{DatabaseTools.us_password}';"""
+
+        get_list_db = 'SELECT datname FROM pg_database;'
+        self.__connect_db(DatabaseTools.pg_db, DatabaseTools.pg_username, DatabaseTools.pg_password)
+        db_list = self.__execute_query(get_list_db)
+        self.__close_connection()
+
+        if (DatabaseTools.us_db,) not in db_list:
+            self.__connect_db(DatabaseTools.pg_db, DatabaseTools.pg_username, DatabaseTools.pg_password)
+            self.__connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+            self.__cursor.execute(create_db)
+            self.__close_connection()
+        else:
+            print(f'The database "{DatabaseTools.us_db}" exists!')
+
+        get_user = f'SELECT rolname FROM pg_roles;'
+        self.__connect_db(DatabaseTools.pg_db, DatabaseTools.pg_username, DatabaseTools.pg_password)
+        user_list = self.__execute_query(get_user)
+        self.__close_connection()
+
+        if (DatabaseTools.us_username,) not in user_list:
+            self.__connect_db(DatabaseTools.pg_db, DatabaseTools.pg_username, DatabaseTools.pg_password)
+            self.__execute_query(create_user)
+            self.__close_connection()
+        else:
+            print(f'The user "{DatabaseTools.us_username}" exists!')
+
+        self.__connect_db(username=DatabaseTools.pg_username, pwd=DatabaseTools.pg_password)
         for table in tables:
             self.__execute_query(table)
+        self.__execute_query(f"GRANT ALL ON SCHEMA public TO {DatabaseTools.us_username}")
+        self.__execute_query(f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {DatabaseTools.us_username}")
+        self.__execute_query(f"GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO {DatabaseTools.us_username}")
         self.__close_connection()
 
 

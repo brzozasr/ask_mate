@@ -4,12 +4,42 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <title>{% block title %} {% endblock %} - AskMate</title>
 </head>
 <body>
+    <!-- Top Navigation Menu -->
+    <div class="topnav" style="background: white">
+        <div class="top-bar">
+            <div class="logo border">
+                A<span class="logo sm">SK</span><span class="logo blue">M<span class="logo sm blue">ATE</span></span>
+            </div>
+            <div>Signed in as <strong>brzozasr@gmail.com</strong></div>
+        </div>
+        <div id="myLinks">
+            <a href="{{ url_for('index') }}">Home page</a>
+            <a href="{{ url_for('question_list') }}">Questions' list</a>
+            <hr class="separator">
+            <a href="{{ url_for('sign_in') }}">Sign in</a>
+            <a href="{{ url_for('sign_up') }}">Sign up</a>
+        </div>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="fa fa-bars"></i>
+        </a>
+    </div>
     <div id="content">
     {%- block content %} {% endblock %}
     </div>
+<script>
+function myFunction() {
+  var x = document.getElementById("myLinks");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+</script>
 </body>
 </html>

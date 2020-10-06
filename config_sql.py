@@ -1,5 +1,0 @@
-DB_NAME = 'ask_mate'
-DB_USER = 'postgres'
-DB_PASSWORD = 'brzozasr'
-DB_HOST = 'localhost'
-DB_PORT = '5432'
