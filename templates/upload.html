@@ -8,6 +8,7 @@
     {% set upload_url = url_for('upload_file.upload_img_answer', answer_id=answer_id, question_id=question_id) %}
 {% endif %}
 {% block content %}
+    {% if session.get(user_id) and session.get(user_email) -%}
     <h2 class="title">Upload File</h2>
      <form class="center" action="{{ upload_url }}" method="post" enctype="multipart/form-data" accept=".png,.jpg,.jpeg">
         <label for="file_img">Select a image:</label>
@@ -21,4 +22,8 @@
             {%- endif %}
         {%- endwith %}
     </form>
+    {%- else %}
+    <p class="error center">You must be sign in to access this page!</p><br>
+    <p class="center"><a class="btn_green" href="{{ url_for('sign_in') }}">Sign in</a></p>
+    {%- endif %}
 {% endblock %}

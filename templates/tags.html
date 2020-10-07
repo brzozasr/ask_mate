@@ -6,6 +6,7 @@
 {% block title %}Tags{% endblock %}
 
 {% block content %}
+    {% if session.get(user_id) and session.get(user_email) -%}
     <h2 class="title">Tags</h2>
     <div class="tags">
         <div>
@@ -43,4 +44,8 @@
         {%- endfor %}
         {%- endif %}
     {%- endwith %}
+    {%- else %}
+    <p class="error center">You must be sign in to access this page!</p><br>
+    <p class="center"><a class="btn_green" href="{{ url_for('sign_in') }}">Sign in</a></p>
+    {%- endif %}
 {% endblock %}

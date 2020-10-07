@@ -23,6 +23,7 @@
 {% block title %}{{ title_page }}{% endblock %}
 
 {% block content %}
+    {% if session.get(user_id) and session.get(user_email) -%}
     <h2 class="title">{{ header }}</h2>
     <form class="center" action="{{ form_url }}" method="post">
         <label for="comment">Comment:</label><br>
@@ -30,4 +31,8 @@
         <br>
         <input class="btn" type="submit" value="{{ btn_txt }}" name="sub_button"><a href="{{ url_for('question_view', question_id=question_id, boolean="False") }}"><input class="btn" type="button" value="Cancel"></a>
     </form>
+    {%- else %}
+    <p class="error center">You must be sign in to access this page!</p><br>
+    <p class="center"><a class="btn_green" href="{{ url_for('sign_in') }}">Sign in</a></p>
+    {%- endif %}
 {% endblock %}

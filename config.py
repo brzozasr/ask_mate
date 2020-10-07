@@ -1,3 +1,5 @@
+from os import urandom
+
 """Data to login as postgres administrator."""
 PG_DB = 'postgres'  # <-- DO NOT CHANGE - database name
 PG_USERNAME = 'postgres'
@@ -12,6 +14,11 @@ This data is required to create a user if it does not exist."""
 US_DB = 'ask_mate'
 US_USERNAME = 'askmate'
 US_PASSWORD = 'brzozasr1'
+
+"""Session variables"""
+SESSION_SECRET_KEY = urandom(64)
+SESSION_USER_ID = 'user_id'
+SESSION_USER_EMAIL = 'user_email'
 
 """Commend to add and revoke privileges to a database for a user."""
 # GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO askmate; <-- askmate, it is a username
