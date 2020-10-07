@@ -15,19 +15,32 @@
             <div class="logo border">
                 A<span class="logo sm">SK</span><span class="logo blue">M<span class="logo sm blue">ATE</span></span>
             </div>
-            {% if session[user_id] and session[user_email] -%}
+            {% if session.get(user_id) and session.get(user_email) -%}
             <div style="color: #000099">Signed in as <strong>{{ session[user_email] }}</strong></div>
             {%- endif %}
         </div>
         <div id="myLinks">
+            {% if request.url_rule|string != url_for('index') -%}
             <a href="{{ url_for('index') }}">Home page</a>
+            {%- endif %}
+            {% if request.url_rule|string != url_for('question_list') -%}
             <a href="{{ url_for('question_list') }}">Questions' list</a>
+            {%- endif %}
             <hr class="separator">
-            {% if session[user_id] and session[user_email] -%}
-            <a href="{{ url_for('sign_out') }}">Sign out</a>
-            {% else %}
-            <a href="{{ url_for('sign_in') }}">Sign in</a>
-            <a href="{{ url_for('sign_up') }}">Sign up</a>
+            {% if session.get(user_id) and session.get(user_email) -%}
+                {% if request.url_rule|string != url_for('add_question') -%}
+                <a href="{{ url_for('add_question') }}">Add question</a>
+                {%- endif %}
+                {% if request.url_rule|string != url_for('sign_out') -%}
+                <a href="{{ url_for('sign_out') }}">Sign out</a>
+                {%- endif %}
+            {%- else %}
+                {% if request.url_rule|string != url_for('sign_in') -%}
+                <a href="{{ url_for('sign_in') }}">Sign in</a>
+                {%- endif %}
+                {% if request.url_rule|string != url_for('sign_up') -%}
+                <a href="{{ url_for('sign_up') }}">Sign up</a>
+                {%- endif %}
             {%- endif %}
         </div>
         <a href="javascript:void(0);" class="icon" onclick="myFunction()">

@@ -33,9 +33,9 @@ __query_all = {
     'answer_update_vote_number_by_id':
         'UPDATE answer SET vote_number = vote_number + %s WHERE id = %s',
     'question_insert':
-        'INSERT INTO question (title, message) VALUES (%s, %s)',
+        'INSERT INTO question (title, message, user_id) VALUES (%s, %s, %s)',
     'answer_insert':
-        'INSERT INTO answer (question_id, message) VALUES (%s, %s)',
+        'INSERT INTO answer (question_id, message, user_id) VALUES (%s, %s, %s)',
     'answer_get_img_path':
         'SELECT image FROM answer WHERE question_id = %s',
     'question_delete':
@@ -51,9 +51,9 @@ __query_all = {
     'answer_count_fk_question_id':
         'SELECT COUNT(question_id) FROM answer WHERE question_id = %s',
     'comment_insert_to_question':
-        'INSERT INTO comment (question_id, message) VALUES (%s, %s)',
+        'INSERT INTO comment (question_id, message, user_id) VALUES (%s, %s, %s)',
     'comment_insert_to_answer':
-        'INSERT INTO comment (question_id, answer_id, message) VALUES (%s, %s, %s)',
+        'INSERT INTO comment (question_id, answer_id, message, user_id) VALUES (%s, %s, %s, %s)',
     'comment_select_by_question_id':
         'SELECT id, question_id, answer_id, message, submission_time, edited_number FROM comment WHERE question_id = %s ORDER BY submission_time DESC',
     'comment_select_by_comment_id':
