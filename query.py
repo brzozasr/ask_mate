@@ -103,6 +103,14 @@ __query_all = {
         'INSERT INTO users (email, pwd) VALUES (%s, %s)',
     'users_select_by_email':
         'SELECT id, email, pwd FROM users WHERE email = %s',
+    'users_activation':
+    """SELECT u.id, u.email, u.registration_time,
+    (SELECT COUNT(q.user_id) FROM question AS q WHERE q.user_id = u.id),
+    (SELECT COUNT(a.user_id) FROM answer AS a WHERE a.user_id = u.id),
+    (SELECT COUNT(c.user_id) FROM comment AS c WHERE c.user_id = u.id), u.reputation
+    FROM users AS u
+    GROUP BY u.id
+    ORDER BY u.email""",
 }
 
 

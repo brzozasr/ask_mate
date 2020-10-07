@@ -1,0 +1,49 @@
+{% extends 'pattern.html' %}
+{% block title %}User List{% endblock %}
+
+{% set u_id = 0 %}
+{% set u_email = 1 %}
+{% set u_date = 2 %}
+{% set u_question = 3 %}
+{% set u_answer = 4 %}
+{% set u_comment = 5 %}
+{% set u_reputation = 6 %}
+
+{% block content %}
+    {% if session.get(user_id) and session.get(user_email) -%}
+    <h2 class="title">Users List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2">ID</th>
+                <th rowspan="2">Email</th>
+                <th rowspan="2">Registration Date</th>
+                <th colspan="3">User Activity</th>
+                <th rowspan="2">Reputation</th>
+            </tr>
+            <tr>
+                <th>Questions</th>
+                <th>Answers</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users -%}
+            {% set date = user[u_date]|string -%}
+            <tr>
+                <td>{{ user[u_id] }}</td>
+                <td><a class="email" href="{{ url_for('user_page', user_id=user[u_id]) }}">{{ user[u_email] }}</a></td>
+                <td>{{ date[:19] }}</td>
+                <td>{{ user[u_question] }}</td>
+                <td>{{ user[u_answer] }}</td>
+                <td>{{ user[u_comment] }}</td>
+                <td>{{ user[u_reputation] }}</td>
+             </tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+    {%- else %}
+    <p class="error center">You must be sign in to access this page!</p><br>
+    <p class="center"><a class="btn_green" href="{{ url_for('sign_in') }}">Sign in</a></p>
+    {%- endif %}
+{% endblock %}

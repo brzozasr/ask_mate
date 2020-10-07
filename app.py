@@ -312,9 +312,26 @@ def sign_out():
         return render_template('not_sign_in_page.html')
 
 
+@app.route('/users')
+def users():
+    if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+        users_data = db.execute_sql(query.users_activation)
+        if users_data and type(users_data) == list and len(users_data) > 0:
+            return render_template('users.html', users=users_data)
+        else:
+            if type(users_data) == list:
+                error = {'empty_list': 'Invalid email address or password!'}
+            else:
+                error = {'db_error': str(users_data)}
+
+            return render_template('users.html', error=error)
+    else:
+        return render_template('not_sign_in_page.html')
+
+
 @app.route('/user/<int:user_id>')
 def user_page(user_id):
-    return render_template('user_page.html')
+    return render_template('user.html')
 
 
 @app.errorhandler(404)

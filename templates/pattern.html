@@ -31,6 +31,9 @@
                 {% if request.url_rule|string != url_for('add_question') -%}
                 <a href="{{ url_for('add_question') }}">Add question</a>
                 {%- endif %}
+                {% if request.url_rule|string != url_for('users') -%}
+                <a href="{{ url_for('users') }}">Users</a>
+                {%- endif %}
                 {% if request.url_rule|string != url_for('sign_out') -%}
                 <a href="{{ url_for('sign_out') }}">Sign out</a>
                 {%- endif %}

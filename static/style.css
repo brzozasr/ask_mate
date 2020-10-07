@@ -410,7 +410,6 @@ a:link.del-tag, a:visited.del-tag, .del-tag {
   border: 1px solid black;
   color: white;
   padding: 0 2px;
-;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -450,6 +449,17 @@ a:hover.del-tag, a:active.del-tag {
 
 p.comment-font {
   font-size: 0.9em;
+}
+
+a:link.email, a:visited.email, .email {
+  color: black;
+  text-align: center;
+  text-decoration: underline;
+}
+
+a:hover.email, a:active.email {
+  color: #000099;
+  text-decoration: none;
 }
 
 a:link.btn_red, a:visited.btn_red, .btn_red {
