@@ -1,15 +1,19 @@
+import bcrypt
 from flask import Flask
 
 from tools import *
 from upload_file import *
-from os import urandom
-import bcrypt
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(upload_file, url_prefix='/upload')
-app.jinja_env.globals.update(highlight_phrase=highlight_phrase, is_list=is_list)
-app.secret_key = urandom(64)
+app.jinja_env.globals.update(highlight_phrase=highlight_phrase, is_list=is_list, type=type)
+app.secret_key = SESSION_SECRET_KEY
+
+
+@app.context_processor
+def inject_global():
+    return dict(user_id=SESSION_USER_ID, user_email=SESSION_USER_EMAIL)
 
 
 @app.route('/')
@@ -66,10 +70,13 @@ def vote(question_id, element, value, answer_id=None):
 @app.route('/add_question', methods=['GET', 'POST'])
 def add_question():
     if request.method == 'POST':
-        title = request.form['title']
-        question = request.form['question']
-        db.execute_sql(query.question_insert, [title, question])
-        return redirect(url_for('question_list'))
+        if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+            title = request.form['title']
+            question = request.form['question']
+            db.execute_sql(query.question_insert, [title, question, session.get(SESSION_USER_ID)])
+            return redirect(url_for('question_list'))
+        else:
+            return render_template('not_sign_in_page.html')
     else:
         return render_template('add_edit_question.html')
 
@@ -78,13 +85,16 @@ def add_question():
 @app.route('/answer/<int:question_id>/<int:answer_id>/edit', endpoint='edit_answer', methods=['GET', 'POST'])
 def new_answer(question_id, answer_id=None):
     if request.method == 'POST':
-        answer = request.form['answer']
-        if request.endpoint == 'add_answer':
-            db.execute_sql(query.answer_insert, [question_id, answer])
-            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
-        elif request.endpoint == 'edit_answer':
-            db.execute_sql(query.answer_update_by_id, [answer, answer_id])
-            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+            answer = request.form['answer']
+            if request.endpoint == 'add_answer':
+                db.execute_sql(query.answer_insert, [question_id, answer, session.get(SESSION_USER_ID)])
+                return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+            elif request.endpoint == 'edit_answer':
+                db.execute_sql(query.answer_update_by_id, [answer, answer_id])
+                return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        else:
+            return render_template('not_sign_in_page.html')
     else:
         answer_txt = db.execute_sql(query.answer_select_message_by_id, [answer_id])
         return render_template('new_answer.html', question_id=question_id, answer_id=answer_id,
@@ -96,18 +106,21 @@ def new_answer(question_id, answer_id=None):
 @app.route('/comment/<int:question_id>/<int:comment_id>/edit', endpoint='comment_edit', methods=['GET', 'POST'])
 def add_comment(question_id, answer_id=None, comment_id=None):
     if request.method == 'POST':
-        if request.endpoint == 'comment_question':
-            comment_question = request.form['comment']
-            db.execute_sql(query.comment_insert_to_question, [question_id, comment_question])
-            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
-        elif request.endpoint == 'comment_answer':
-            comment_answer = request.form['comment']
-            db.execute_sql(query.comment_insert_to_answer, [question_id, answer_id, comment_answer])
-            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
-        elif request.endpoint == 'comment_edit':
-            comment_edit = request.form['comment']
-            db.execute_sql(query.comment_update_by_id, [comment_edit, comment_id])
-            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+            if request.endpoint == 'comment_question':
+                comment_question = request.form['comment']
+                db.execute_sql(query.comment_insert_to_question, [question_id, comment_question, session.get(SESSION_USER_ID)])
+                return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+            elif request.endpoint == 'comment_answer':
+                comment_answer = request.form['comment']
+                db.execute_sql(query.comment_insert_to_answer, [question_id, answer_id, comment_answer, session.get(SESSION_USER_ID)])
+                return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+            elif request.endpoint == 'comment_edit':
+                comment_edit = request.form['comment']
+                db.execute_sql(query.comment_update_by_id, [comment_edit, comment_id])
+                return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        else:
+            return render_template('not_sign_in_page.html')
     else:
         comment = db.execute_sql(query.comment_select_by_comment_id, [comment_id])
         return render_template('form_comment.html', question_id=question_id, answer_id=answer_id, comment_id=comment_id,
@@ -116,47 +129,59 @@ def add_comment(question_id, answer_id=None, comment_id=None):
 
 @app.route('/comments/<int:comment_id>/delete')
 def del_comment(comment_id):
-    quest_id = db.execute_sql(query.comment_delete, [comment_id])
-    return redirect(url_for('question_view', question_id=quest_id[0][0], boolean="False"))
+    if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+        quest_id = db.execute_sql(query.comment_delete, [comment_id])
+        return redirect(url_for('question_view', question_id=quest_id[0][0], boolean="False"))
+    else:
+        return render_template('not_sign_in_page.html')
 
 
 @app.route('/question/<int:question_id>/delete')
 def delete_question(question_id):
-    list_img = []
-    answer_path_img = db.execute_sql(query.answer_get_img_path, [question_id])
-    if len(answer_path_img) > 0:
-        for answer_img in answer_path_img:
-            if answer_img[0] is not None:
-                list_img.append(answer_img[0])
+    if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+        list_img = []
+        answer_path_img = db.execute_sql(query.answer_get_img_path, [question_id])
+        if len(answer_path_img) > 0:
+            for answer_img in answer_path_img:
+                if answer_img[0] is not None:
+                    list_img.append(answer_img[0])
 
-    question_path_img = db.execute_sql(query.question_delete, [question_id])
-    if len(question_path_img) > 0:
-        if question_path_img[0][0] is not None:
-            list_img.append(question_path_img[0][0])
+        question_path_img = db.execute_sql(query.question_delete, [question_id])
+        if len(question_path_img) > 0:
+            if question_path_img[0][0] is not None:
+                list_img.append(question_path_img[0][0])
 
-    if len(list_img) > 0:
-        for path_img in list_img:
-            delete_img(path_img)
-    return redirect(url_for('question_list'))
+        if len(list_img) > 0:
+            for path_img in list_img:
+                delete_img(path_img)
+        return redirect(url_for('question_list'))
+    else:
+        return render_template('not_sign_in_page.html')
 
 
 @app.route('/answer/<int:answer_id>/delete')
 def delete_answer(answer_id):
-    path_and_id = db.execute_sql(query.answer_delete, [answer_id])
+    if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+        path_and_id = db.execute_sql(query.answer_delete, [answer_id])
 
-    if len(path_and_id) > 0 and path_and_id[0][0] is not None:
-        delete_img(path_and_id[0][0])
+        if len(path_and_id) > 0 and path_and_id[0][0] is not None:
+            delete_img(path_and_id[0][0])
 
-    return redirect(url_for('question_view', question_id=path_and_id[0][1], boolean="False"))
+        return redirect(url_for('question_view', question_id=path_and_id[0][1], boolean="False"))
+    else:
+        return render_template('not_sign_in_page.html')
 
 
 @app.route('/question/<int:question_id>/edit', methods=['GET', 'POST'])
 def edit_question(question_id):
     if request.method == 'POST':
-        title = request.form['title']
-        question = request.form['question']
-        db.execute_sql(query.question_update, [title, question, question_id])
-        return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+            title = request.form['title']
+            question = request.form['question']
+            db.execute_sql(query.question_update, [title, question, question_id])
+            return redirect(url_for('question_view', question_id=question_id, boolean="False"))
+        else:
+            return render_template('not_sign_in_page.html')
     else:
         question = db.execute_sql(query.question_select_by_id, [question_id])
         return render_template('add_edit_question.html', question=question)
@@ -181,36 +206,42 @@ def search():
 
 @app.route('/question/<int:question_id>/new-tag', methods=['GET', 'POST'])
 def new_tag(question_id):
-    if request.method == 'POST':
-        posted_tags = request.form.to_dict()
-        if len(posted_tags) > 0:
-            tags_list = []
-            for tag_id in posted_tags.keys():
-                tags_list.append([question_id, int(tag_id)])
+    if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+        if request.method == 'POST':
+            posted_tags = request.form.to_dict()
+            if len(posted_tags) > 0:
+                tags_list = []
+                for tag_id in posted_tags.keys():
+                    tags_list.append([question_id, int(tag_id)])
 
-            db.execute_multi_sql(query.question_tag_insert, tags_list)
-            return redirect(url_for('question_view', question_id=question_id, boolean=False))
+                db.execute_multi_sql(query.question_tag_insert, tags_list)
+                return redirect(url_for('question_view', question_id=question_id, boolean=False))
+            else:
+                flash('To send the form you need to select at least one tag!')
+                return redirect(request.url)
+        elif (tag := request.args.get('add-new-tag')) is not None and len(tag) > 0:
+            error = db.execute_sql(query.tag_insert, [tag])
+            if error:
+                flash(error)
+            return redirect(url_for('new_tag', question_id=question_id))
         else:
-            flash('To send the form you need to select at least one tag!')
-            return redirect(request.url)
-    elif (tag := request.args.get('add-new-tag')) is not None and len(tag) > 0:
-        error = db.execute_sql(query.tag_insert, [tag])
-        if error:
-            flash(error)
-        return redirect(url_for('new_tag', question_id=question_id))
+            list_add_tags = []
+            quest_tags = db.execute_sql(query.question_tag_select_by_question_id, [question_id])
+            for tag in quest_tags:
+                list_add_tags.append(tag[2])
+            tags = db.execute_sql(query.tag_select)
+            return render_template('tags.html', question_id=question_id, tags=tags, add_tags=list_add_tags)
     else:
-        list_add_tags = []
-        quest_tags = db.execute_sql(query.question_tag_select_by_question_id, [question_id])
-        for tag in quest_tags:
-            list_add_tags.append(tag[2])
-        tags = db.execute_sql(query.tag_select)
-        return render_template('tags.html', question_id=question_id, tags=tags, add_tags=list_add_tags)
+        return render_template('not_sign_in_page.html')
 
 
 @app.route('/question/<int:question_id>/tag/<int:tag_id>/delete')
 def tag_delete(question_id, tag_id):
-    db.execute_sql(query.question_tag_delete_by_id, [tag_id])
-    return redirect(url_for('question_view', question_id=question_id, boolean=False))
+    if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+        db.execute_sql(query.question_tag_delete_by_id, [tag_id])
+        return redirect(url_for('question_view', question_id=question_id, boolean=False))
+    else:
+        return render_template('not_sign_in_page.html')
 
 
 @app.route('/sign_up', methods=['GET', 'POST'])
@@ -226,11 +257,12 @@ def sign_up():
             error = {'pass': 'Passwords must be the same!'}
             return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
         else:
-            pwd = bcrypt.hashpw(first_pwd.encode('utf-8'), bcrypt.gensalt())
-            error_txt = db.execute_sql(query.user_registration, [email, pwd])
+            pwd_hash = bcrypt.hashpw(first_pwd.encode('utf-8'), bcrypt.gensalt())
+            error_txt = db.execute_sql(query.users_registration, [email, pwd_hash.decode('utf-8')])
             if error_txt:
                 error = {'db_error': str(error_txt)}
-                return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
+                return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd,
+                                       error=error)
             else:
                 info = 'You have been successfully registered'
                 return render_template('sign_up.html', info=info)
@@ -238,9 +270,46 @@ def sign_up():
         return render_template('sign_up.html')
 
 
-@app.route('/sign_in')
+@app.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
-    return render_template('sign_in.html')
+    if request.method == 'POST':
+        user_name = request.form['user-name']
+        log_pwd = request.form['log-pwd']
+        log_data = db.execute_sql(query.users_select_by_email, [user_name])
+        if log_data and type(log_data) == list and len(log_data) == 1:
+            user_data = {}
+            dict_key = [SESSION_USER_ID, SESSION_USER_EMAIL, 'user_pwd']
+            i = 0
+            for data in log_data[0]:
+                user_data[dict_key[i]] = data
+                i += 1
+            if user_name == user_data[SESSION_USER_EMAIL] and bcrypt.checkpw(log_pwd.encode('utf-8'),
+                                                                             user_data['user_pwd'].encode('utf-8')):
+                session[SESSION_USER_ID] = user_data[SESSION_USER_ID]
+                session[SESSION_USER_EMAIL] = user_data[SESSION_USER_EMAIL]
+                return redirect(url_for('index'))
+            else:
+                error = {'log_error': 'Invalid email address or password!'}
+                return render_template('sign_in.html', error=error)
+        else:
+            if type(log_data) == list:
+                error = {'log_error': 'Invalid email address or password!'}
+            else:
+                error = {'db_error': str(log_data)}
+            return render_template('sign_in.html', error=error)
+    else:
+        return render_template('sign_in.html')
+
+
+@app.route('/sign_out')
+def sign_out():
+    if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+        session.pop(SESSION_USER_ID, None)
+        session.pop(SESSION_USER_EMAIL, None)
+        session.clear()
+        return redirect(url_for('index'))
+    else:
+        return render_template('not_sign_in_page.html')
 
 
 @app.route('/user/<int:user_id>')

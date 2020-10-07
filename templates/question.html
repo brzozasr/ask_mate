@@ -31,7 +31,9 @@
         {%- for tag in tags %}
             <div>{{ tag[tag_title] }}&nbsp;&nbsp;<a class="del-tag" href="{{ url_for('tag_delete', question_id=q_id, tag_id=tag[qt_id]) }}" onclick="return confirm('Do you want to delete the tag named: {{ tag[tag_title] }}?');">X</a></div>
         {%- endfor %}
+            {% if session.get(user_id) and session.get(user_email) -%}
             <a class="add" href="{{ url_for('new_tag', question_id=q_id) }}">+ Add tag</a>
+            {%- endif %}
         </div>
     {# Question -#}
         <div class="question">
@@ -46,6 +48,7 @@
                     <a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=1) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=2) }}">-</a>
                 </div>
                 <div>&nbsp;&nbsp;<small>Vote: {{ question[q_vote] }}</small></div>
+                {% if session.get(user_id) and session.get(user_email) -%}
                 <div class="separate"><a class="add" href="{{ url_for('add_answer', question_id=q_id) }}">+ Add answer</a>
                 <a class="add" style="margin-right: 50px" href="{{ url_for('comment_question', question_id=q_id) }}">+ Add comment</a>
                 {% if question[q_image] == None -%}
@@ -54,6 +57,7 @@
                 <a class="edit" href="{{ url_for('edit_question', question_id=q_id) }}">&plusmn; Edit question</a>
                 <a class="del" href="{{ url_for('delete_question', question_id=q_id) }}" onclick="return confirm('Do you want to delete question with ID: {{ q_id }}?');">- Delete question</a>
                 </div>
+                {%- endif %}
             </div>
         </div>
         {# Comments for a question -#}
@@ -64,10 +68,12 @@
                 <p><small>Posted date: {{ c_date[:19] }}, Edited times: {{ c_line[c_edited_no] }}</small></p>
                 <p class="comment-font">{{ c_line[c_message] }}</p>
                 <div class="inner">
+                    {% if session.get(user_id) and session.get(user_email) -%}
                     <div>
                         <a class="edit" href="{{ url_for('comment_edit', question_id=q_id, comment_id=c_line[c_id]) }}">&plusmn; Edit comment</a>
                         <a class="del" href="{{ url_for('del_comment', comment_id=c_line[c_id]) }}" onclick="return confirm('Do you want to delete the comment?');">- Delete comment</a>
                     </div>
+                    {%- endif %}
                 </div>
             </div>
             {%- endif %}
@@ -86,6 +92,7 @@
                     <a class="vote" href="{{ url_for('vote', element='answer', question_id=q_id, value=1, answer_id=a_line[a_id]) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='answer', question_id=q_id, value=2, answer_id=a_line[a_id]) }}">-</a>
                 </div>
                 <div>&nbsp;&nbsp;<small>Vote: {{ a_line[a_vote] }}</small></div>
+                {% if session.get(user_id) and session.get(user_email) -%}
                 <div class="separate">
                 <a class="add" style="margin-right: 50px" href="{{ url_for('comment_answer', question_id=q_id, answer_id=a_line[a_id]) }}">+ Add comment</a>
                 {% if a_line[a_image] == None -%}
@@ -94,6 +101,7 @@
                 <a class="edit" href="{{ url_for('edit_answer', question_id=q_id, answer_id=a_line[a_id]) }}">&plusmn; Edit answer</a>
                 <a class="del" href="{{ url_for('delete_answer', answer_id=a_line[a_id]) }}" onclick="return confirm('Do you want to delete answer with ID: {{ a_line[a_id] }}?');">- Delete answer</a>
                 </div>
+                {%- endif %}
             </div>
         </div>
         {# Coments to an answer -#}
@@ -104,10 +112,12 @@
                 <p><small>Posted date: {{ c_date[:19] }}, Edited times: {{ c_line[c_edited_no] }}</small></p>
                 <p class="comment-font">{{ c_line[c_message] }}</p>
                 <div class="inner">
+                    {% if session.get(user_id) and session.get(user_email) -%}
                     <div>
                         <a class="edit" href="{{ url_for('comment_edit', question_id=q_id, comment_id=c_line[c_id]) }}">&plusmn; Edit comment</a>
                         <a class="del" href="{{ url_for('del_comment', comment_id=c_line[c_id]) }}" onclick="return confirm('Do you want to delete the comment?');">- Delete comment</a>
                     </div>
+                    {%- endif %}
                 </div>
             </div>
             {%- endif %}
