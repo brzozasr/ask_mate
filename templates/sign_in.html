@@ -4,16 +4,13 @@
 {% block content %}
     <h2 class="title">Sign in</h2>
     <form class="center" action="{{ url_for('sign_in') }}" method="post">
-        <label for="user-name">Address Email:</label><br>
-        {% if 'email' in error -%}
-            <span class="error">{{ error['email'] }}</span>
+        {% if 'log_error' in error -%}
+            <span class="error">{{ error['log_error'] }}</span><br>
         {%- endif  %}
+        <label for="user-name">Address Email:</label><br>
         <input type="email" id="user-name" name="user-name" placeholder="Write address email" value="{{ email }}" required><br>
         <br>
         <label for="log-pwd">Password:</label><br>
-        {% if 'pass' in error -%}
-            <span class="error">{{ error['pass'] }}</span>
-        {%- endif  %}
         <input type="password" id="log-pwd" name="log-pwd" placeholder="Write password" value="{{ pwd }}" required><br>
         <br>
         <input class="btn" type="submit" value="Sign in">

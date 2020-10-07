@@ -230,19 +230,19 @@ def sign_up():
         second_pwd = request.form['second-pwd']
         if not is_email_correct(email):
             error = {'email': 'Invalid email address!'}
-            return redirect(url_for('sign_up', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error))
+            return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
         elif not is_same_pwp(first_pwd, second_pwd):
             error = {'pass': 'Passwords must be the same!'}
-            return redirect(url_for('sign_up', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error))
+            return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
         else:
             pwd_hash = bcrypt.hashpw(first_pwd.encode('utf-8'), bcrypt.gensalt())
             error_txt = db.execute_sql(query.users_registration, [email, pwd_hash.decode('utf-8')])
             if error_txt:
                 error = {'db_error': str(error_txt)}
-                return redirect(url_for('sign_up', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error))
+                return render_template('sign_up.html', email=email, first_pwd=first_pwd, second_pwd=second_pwd, error=error)
             else:
                 info = 'You have been successfully registered'
-                return redirect(url_for('sign_up', info=info))
+                return render_template('sign_up.html', info=info)
     else:
         return render_template('sign_up.html')
 
@@ -266,10 +266,13 @@ def sign_in():
                 return redirect(url_for('index'))
             else:
                 error = {'log_error': 'Invalid email address or password!'}
-                return redirect(url_for('sign_in', error=error))
+                return render_template('sign_in.html', error=error)
         else:
-            error = {'db_error': str(log_data)}
-            return redirect(url_for('sign_in', error=error))
+            if type(log_data) == list:
+                error = {'log_error': 'Invalid email address or password!'}
+            else:
+                error = {'db_error': str(log_data)}
+            return render_template('sign_in.html', error=error)
     else:
         return render_template('sign_in.html')
 
