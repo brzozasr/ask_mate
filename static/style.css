@@ -412,6 +412,7 @@ h2.title {
 
 h3.sub-title {
   color: #0146f3;
+  text-decoration: underline;
   margin: auto;
   text-align: center;
 }

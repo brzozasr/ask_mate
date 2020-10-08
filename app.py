@@ -335,6 +335,8 @@ def user_page(user_id):
     if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
         user_data = db.execute_sql(query.user_activation_page, [user_id])
         user_questions = db.execute_sql(query.question_select_by_user_id, [user_id])
+        user_answer = db.execute_sql(query.answer_select_by_user_id, [user_id])
+        user_comment = db.execute_sql(query.comment_select_by_user_id, [user_id])
         if user_data and type(user_data) == list and len(user_data) == 1:
             error = None
             titles = ['User ID:', 'User\'s email address:', 'Registration date:', 'Asked questions:',
@@ -344,7 +346,8 @@ def user_page(user_id):
             for cell in user_data[0]:
                 user_dict[titles[i]] = cell
                 i += 1
-            return render_template('user.html', error=error, user_dict=user_dict, user_questions=user_questions)
+            return render_template('user.html', error=error, user_dict=user_dict, user_questions=user_questions,
+                                   user_answer=user_answer, user_comment=user_comment)
         else:
             if type(user_data) == list:
                 error = 'There is no such user!'

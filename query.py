@@ -120,7 +120,14 @@ __query_all = {
     WHERE u.id = %s
     GROUP BY u.id""",
     'question_select_by_user_id':
-    'SELECT id, submission_time, view_number, vote_number, title, message FROM question WHERE user_id = %s ORDER BY submission_time DESC',
+    """SELECT id, submission_time, view_number, vote_number, title, message 
+    FROM question WHERE user_id = %s ORDER BY submission_time DESC""",
+    'answer_select_by_user_id':
+    """SELECT id, submission_time, vote_number, question_id, message 
+    FROM answer WHERE user_id = %s ORDER BY submission_time DESC""",
+    'comment_select_by_user_id':
+        'SELECT id, question_id, answer_id, message, submission_time, edited_number FROM comment WHERE user_id = %s',
+
 }
 
 
