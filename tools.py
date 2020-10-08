@@ -84,3 +84,10 @@ def is_same_pwp(first, second):
         return True
     else:
         return False
+
+
+def cut_url(request_url: str, request_url_root: str) -> str:
+    if request_url_root in request_url:
+        return request_url.replace(request_url_root, '/')
+    else:
+        return ''
