@@ -145,6 +145,48 @@ tr:hover.adv-search {
   cursor: pointer;
 }
 
+/*table user questions, answers, comments - start*/
+table.user-data {
+  border-collapse: collapse;
+  width: 70%;
+  margin: auto;
+}
+
+td.user-data {
+  padding: 5px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover.user-data {
+  background-color: #cccccc;
+  cursor: pointer;
+}
+
+/*table user*/
+table.user {
+  margin-left:auto;
+  margin-right:auto;
+  width: fit-content;
+}
+
+tr.user {
+  border-style: none;
+}
+
+td.user.col-left {
+  text-align: right;
+  padding-left: 10px;
+  padding-right: 5px;
+  font-weight: bold;
+}
+
+td.user.col-right {
+  border: 1px solid black;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .que {
   padding-left: 5px !important;
 }
@@ -363,6 +405,12 @@ a:hover.sort_select, a:active.sort_select {
 }
 
 h2.title {
+  color: #0146f3;
+  margin: auto;
+  text-align: center;
+}
+
+h3.sub-title {
   color: #0146f3;
   margin: auto;
   text-align: center;

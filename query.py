@@ -111,6 +111,16 @@ __query_all = {
     FROM users AS u
     GROUP BY u.id
     ORDER BY u.email""",
+    'user_activation_page':
+    """SELECT u.id, u.email, u.registration_time,
+    (SELECT COUNT(q.user_id) FROM question AS q WHERE q.user_id = u.id),
+    (SELECT COUNT(a.user_id) FROM answer AS a WHERE a.user_id = u.id),
+    (SELECT COUNT(c.user_id) FROM comment AS c WHERE c.user_id = u.id), u.reputation
+    FROM users AS u
+    WHERE u.id = %s
+    GROUP BY u.id""",
+    'question_select_by_user_id':
+    'SELECT id, submission_time, view_number, vote_number, title, message FROM question WHERE user_id = %s ORDER BY submission_time DESC',
 }
 
 

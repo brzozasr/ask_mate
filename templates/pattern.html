@@ -34,6 +34,9 @@
                 {% if request.url_rule|string != url_for('users') -%}
                 <a href="{{ url_for('users') }}">Users</a>
                 {%- endif %}
+                {% if cut_url(request.url|string, request.url_root|string) != url_for('user_page', user_id=session.get(user_id)) -%}
+                <a href="{{ url_for('user_page', user_id=session.get(user_id)) }}">Your profile</a>
+                {%- endif %}
                 {% if request.url_rule|string != url_for('sign_out') -%}
                 <a href="{{ url_for('sign_out') }}">Sign out</a>
                 {%- endif %}

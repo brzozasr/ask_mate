@@ -11,6 +11,7 @@
 
 {% block content %}
     {% if session.get(user_id) and session.get(user_email) -%}
+        {% if not error %}
     <h2 class="title">Users List</h2>
     <table>
         <thead>
@@ -42,6 +43,9 @@
             {%- endfor %}
         </tbody>
     </table>
+        {% else %}
+        <p class="error center">{{ error }}</p><br>
+        {% endif %}
     {%- else %}
     <p class="error center">You must be sign in to access this page!</p><br>
     <p class="center"><a class="btn_green" href="{{ url_for('sign_in') }}">Sign in</a></p>
