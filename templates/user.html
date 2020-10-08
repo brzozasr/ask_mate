@@ -1,0 +1,103 @@
+{% extends 'pattern.html' %}
+{% block title %}User Info{% endblock %}
+
+{% set q_id = 0 %}
+{% set q_date = 1 %}
+{% set q_view = 2 %}
+{% set q_vote = 3 %}
+{% set q_title = 4 %}
+{% set q_message = 5 %}
+{% set a_id = 0 %}
+{% set a_date = 1 %}
+{% set a_vote = 2 %}
+{% set a_q_id = 3 %}
+{% set a_message = 4 %}
+{% set c_id = 0 %}
+{% set c_q_id = 1 %}
+{% set c_a_id = 2 %}
+{% set c_message = 3 %}
+{% set c_date = 4 %}
+{% set c_edit_no = 5 %}
+
+{% block content %}
+    {% if session.get(user_id) and session.get(user_email) -%}
+        {% if not error %}
+    {% if cut_url(request.url|string, request.url_root|string) == url_for('user_page', user_id=session.get(user_id)) -%}
+    <h2 class="title">Your profile</h2>
+    {%- else %}
+    <h2 class="title">User Info</h2>
+    {%- endif %}
+    <table class="user">
+        {% for key, val in user_dict.items() -%}
+            {% if key == 'Registration date:' -%}
+                {% set val = (val|string)[:19] -%}
+            {%- endif %}
+        <tr class="user">
+            <td class="user col-left">{{ key }}</td>
+            <td class="user col-right">{{ val }}</td>
+         </tr>
+        {%- endfor %}
+    </table>
+    <br>
+    <h3 class="sub-title">Asked Questions</h3>
+    {% if user_questions|length > 0 -%}
+    <table class="user-data">
+        {% for question in user_questions -%}
+        <tr class="user-data" onclick="window.location='{{ url_for('question_view', question_id=question[q_id], boolean="True") }}'">
+            <td class="user-data">
+                <small><strong>Posted date:</strong> {{ (question[q_date]|string)[:19] }}</small><br>
+                <strong>Title:</strong> {{ question[q_title] }}<br>
+                <strong>Question:</strong><br>
+                {{ question[q_message] }}<br>
+                <small><strong>Viewed:</strong> {{ question[q_view] }}, <strong>Voted:</strong> {{ question[q_vote] }}</small>
+            </td>
+        </tr>
+        {%- endfor %}
+    </table>
+    {%- else %}
+        <p class="center">You didn't ask any questions.</p>
+    {%- endif %}
+    <br>
+    <h3 class="sub-title">Given Answers</h3>
+    {% if user_answer|length > 0 -%}
+    <table class="user-data">
+        {% for answer in user_answer -%}
+        <tr class="user-data" onclick="window.location='{{ url_for('question_view', question_id=answer[a_q_id], boolean="True") }}'">
+            <td class="user-data">
+                <small><strong>Posted date:</strong> {{ (answer[a_date]|string)[:19] }}</small><br>
+                <strong>Answer:</strong><br>
+                {{ answer[a_message] }}<br>
+                <small><strong>Voted:</strong> {{ answer[a_vote] }}</small>
+            </td>
+        </tr>
+        {%- endfor %}
+    </table>
+    {%- else %}
+        <p class="center">You didn't answer any questions.</p>
+    {%- endif %}
+    <br>
+    <h3 class="sub-title">Posted Comments</h3>
+    {% if user_comment|length > 0 -%}
+    <table class="user-data">
+        {% for comment in user_comment -%}
+        <tr class="user-data" onclick="window.location='{{ url_for('question_view', question_id=comment[c_q_id], boolean="True") }}'">
+            <td class="user-data">
+                <small><strong>Posted date:</strong> {{ (comment[c_date]|string)[:19] }}</small><br>
+                <strong>Comment:</strong><br>
+                {{ comment[c_message] }}<br>
+                <small><strong>Edited times:</strong> {{ comment[c_edit_no] }}</small>
+            </td>
+        </tr>
+        {%- endfor %}
+    </table>
+    {%- else %}
+        <p class="center">You didn't post any comments.</p>
+    {%- endif %}
+        {%- else %}
+        <p class="error center">{{ error }}</p><br>
+        {%- endif %}
+    {%- else %}
+    <p class="error center">You must be sign in to access this page!</p><br>
+    <p class="center"><a class="btn_green" href="{{ url_for('sign_in') }}">Sign in</a></p>
+    {%- endif %}
+{% endblock %}

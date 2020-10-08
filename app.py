@@ -7,7 +7,7 @@ from upload_file import *
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.register_blueprint(upload_file, url_prefix='/upload')
-app.jinja_env.globals.update(highlight_phrase=highlight_phrase, is_list=is_list, type=type)
+app.jinja_env.globals.update(highlight_phrase=highlight_phrase, is_list=is_list, cut_url=cut_url)
 app.secret_key = SESSION_SECRET_KEY
 
 
@@ -312,9 +312,51 @@ def sign_out():
         return render_template('not_sign_in_page.html')
 
 
+@app.route('/users')
+def users():
+    if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+        users_data = db.execute_sql(query.users_activation)
+        if users_data and type(users_data) == list and len(users_data) > 0:
+            error = None
+            return render_template('users.html', error=error, users=users_data)
+        else:
+            if type(users_data) == list:
+                error = 'There are no users!'
+            else:
+                error = str(users_data)
+
+            return render_template('users.html', error=error)
+    else:
+        return render_template('not_sign_in_page.html')
+
+
 @app.route('/user/<int:user_id>')
 def user_page(user_id):
-    return render_template('user_page.html')
+    if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL):
+        user_data = db.execute_sql(query.user_activation_page, [user_id])
+        user_questions = db.execute_sql(query.question_select_by_user_id, [user_id])
+        user_answer = db.execute_sql(query.answer_select_by_user_id, [user_id])
+        user_comment = db.execute_sql(query.comment_select_by_user_id, [user_id])
+        if user_data and type(user_data) == list and len(user_data) == 1:
+            error = None
+            titles = ['User ID:', 'User\'s email address:', 'Registration date:', 'Asked questions:',
+                      'Given answers:', 'Posted comments:', 'Reputation:']
+            user_dict = {}
+            i = 0
+            for cell in user_data[0]:
+                user_dict[titles[i]] = cell
+                i += 1
+            return render_template('user.html', error=error, user_dict=user_dict, user_questions=user_questions,
+                                   user_answer=user_answer, user_comment=user_comment)
+        else:
+            if type(user_data) == list:
+                error = 'There is no such user!'
+            else:
+                error = str(user_data)
+
+            return render_template('users.html', error=error)
+    else:
+        return render_template('not_sign_in_page.html')
 
 
 @app.errorhandler(404)

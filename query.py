@@ -103,6 +103,31 @@ __query_all = {
         'INSERT INTO users (email, pwd) VALUES (%s, %s)',
     'users_select_by_email':
         'SELECT id, email, pwd FROM users WHERE email = %s',
+    'users_activation':
+    """SELECT u.id, u.email, u.registration_time,
+    (SELECT COUNT(q.user_id) FROM question AS q WHERE q.user_id = u.id),
+    (SELECT COUNT(a.user_id) FROM answer AS a WHERE a.user_id = u.id),
+    (SELECT COUNT(c.user_id) FROM comment AS c WHERE c.user_id = u.id), u.reputation
+    FROM users AS u
+    GROUP BY u.id
+    ORDER BY u.email""",
+    'user_activation_page':
+    """SELECT u.id, u.email, u.registration_time,
+    (SELECT COUNT(q.user_id) FROM question AS q WHERE q.user_id = u.id),
+    (SELECT COUNT(a.user_id) FROM answer AS a WHERE a.user_id = u.id),
+    (SELECT COUNT(c.user_id) FROM comment AS c WHERE c.user_id = u.id), u.reputation
+    FROM users AS u
+    WHERE u.id = %s
+    GROUP BY u.id""",
+    'question_select_by_user_id':
+    """SELECT id, submission_time, view_number, vote_number, title, message 
+    FROM question WHERE user_id = %s ORDER BY submission_time DESC""",
+    'answer_select_by_user_id':
+    """SELECT id, submission_time, vote_number, question_id, message 
+    FROM answer WHERE user_id = %s ORDER BY submission_time DESC""",
+    'comment_select_by_user_id':
+        'SELECT id, question_id, answer_id, message, submission_time, edited_number FROM comment WHERE user_id = %s',
+
 }
 
 
