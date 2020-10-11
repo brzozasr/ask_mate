@@ -101,6 +101,23 @@ def new_answer(question_id, answer_id=None):
                                answer_txt=answer_txt)
 
 
+@app.route('/accept/<int:accept_sts>/<int:answer_id>/<int:answer_user_id>/<int:question_user_id>/<int:question_id>')
+def accept_answer(accept_sts, answer_id, answer_user_id, question_user_id, question_id):
+    if session.get(SESSION_USER_ID) and session.get(SESSION_USER_EMAIL) and session.get(SESSION_USER_ID) == question_user_id:
+        if accept_sts == 1:
+            accept = True
+            db.execute_sql(query.users_gain_lost_reputation, [15, answer_user_id])
+        elif accept_sts == 0:
+            accept = False
+            db.execute_sql(query.users_gain_lost_reputation, [-15, answer_user_id])
+        else:
+            accept = False
+        db.execute_sql(query.answer_update_acceptance_by_id, [accept, answer_id])
+        return redirect(url_for('question_view', question_id=question_id, boolean="True"))
+    else:
+        return render_template('not_sign_in_page.html')
+
+
 @app.route('/question/<int:question_id>/new-comment', endpoint='comment_question', methods=['GET', 'POST'])
 @app.route('/answer/<int:question_id>/<int:answer_id>/new-comment', endpoint='comment_answer', methods=['GET', 'POST'])
 @app.route('/comment/<int:question_id>/<int:comment_id>/edit', endpoint='comment_edit', methods=['GET', 'POST'])
