@@ -23,11 +23,13 @@ __query_all = {
     'question_select_limit_5_desc_by_date':
         'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question ORDER BY submission_time DESC LIMIT 5',
     'question_select_by_id':
-        'SELECT id, submission_time, view_number, vote_number, title, message, image FROM question WHERE id = %s',
+        """SELECT id, submission_time, view_number, vote_number, title, message, image, user_id 
+        FROM question WHERE id = %s""",
     'question_update_view_number_by_id':
         'UPDATE question SET view_number = view_number + 1 WHERE id = %s',
     'answer_select_by_id':
-        'SELECT id, submission_time, vote_number, question_id, message, image FROM answer WHERE question_id = %s ORDER BY submission_time DESC',
+        """SELECT id, submission_time, vote_number, question_id, message, image, user_id, acceptance 
+        FROM answer WHERE question_id = %s ORDER BY submission_time DESC""",
     'question_update_vote_number_by_id':
         'UPDATE question SET vote_number = vote_number + %s WHERE id = %s',
     'answer_update_vote_number_by_id':
@@ -127,6 +129,10 @@ __query_all = {
     FROM answer WHERE user_id = %s ORDER BY submission_time DESC""",
     'comment_select_by_user_id':
         'SELECT id, question_id, answer_id, message, submission_time, edited_number FROM comment WHERE user_id = %s',
+    'answer_update_acceptance_by_id':
+        'UPDATE answer SET acceptance = %s WHERE id = %s',
+    'users_gain_lost_reputation':
+        'UPDATE users SET reputation = reputation + %s WHERE id = %s',
 
 }
 

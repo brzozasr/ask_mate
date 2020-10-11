@@ -317,6 +317,20 @@ a, button {
   font-size: 14px;
 }
 
+a:link.accept, a:visited.accept {
+  background-color: #00b300;
+  color: white;
+  padding: 2px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+a:hover.accept, a:active.accept {
+  background-color: #00cc00;
+}
+
 a:link.vote, a:visited.vote {
   background-color: darkgreen;
   color: white;
@@ -484,7 +498,11 @@ a:hover.del-tag, a:active.del-tag {
   box-shadow: 8px 8px 5px #444;
   border-radius: 4px;
   padding: 8px 12px;
-  margin: 15px 0 0 25px;
+  margin: 15px 0 0 40px;
+}
+
+div.accepted {
+  float: left;
 }
 
 .comment {
@@ -493,7 +511,7 @@ a:hover.del-tag, a:active.del-tag {
   box-shadow: 8px 8px 5px #444;
   border-radius: 4px;
   padding: 8px 12px;
-  margin: 15px 0 0 50px;
+  margin: 15px 0 0 110px;
 }
 
 p.comment-font {

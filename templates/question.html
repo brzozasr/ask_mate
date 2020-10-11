@@ -9,12 +9,15 @@
 {% set q_title = 4 %}
 {% set q_question = 5 %}
 {% set q_image = 6 %}
+{% set q_user_id = 7 %}
 {% set q_date = question[q_date_sub]|string -%}
 {% set a_id = 0 %}
 {% set a_date_sub = 1 %}
 {% set a_vote = 2 %}
 {% set a_answer = 4 %}
 {% set a_image = 5 %}
+{% set a_user_id = 6 %}
+{% set a_acceptance = 7 %}
 {% set c_id = 0 %}
 {% set c_question_id = 1 %}
 {% set c_answer_id = 2 %}
@@ -45,7 +48,7 @@
             {%- endif -%}
             <div class="inner">
                 <div>
-                    <a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=1) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=2) }}">-</a>
+                    <a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=1, user_id=question[q_user_id]) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='question', question_id=q_id, value=2, user_id=question[q_user_id]) }}">-</a>
                 </div>
                 <div>&nbsp;&nbsp;<small>Vote: {{ question[q_vote] }}</small></div>
                 {% if session.get(user_id) and session.get(user_email) -%}
@@ -82,6 +85,9 @@
         {% for a_line in answer -%}
         {% set a_date = a_line[a_date_sub]|string -%}
         <div class="answer">
+            {% if a_line[a_acceptance] -%}
+            <div class="accepted"><img src="{{ url_for('static', filename='img/accepted.png') }}" alt="Accepted"></div>
+            {%- endif %}
             <p><small>Posted date: {{ a_date[:19] }}</small></p>
             <p>{{ a_line[a_answer] }}</p>
             {% if a_line[a_image] != None -%}
@@ -89,12 +95,17 @@
             {%- endif -%}
             <div class="inner">
                 <div>
-                    <a class="vote" href="{{ url_for('vote', element='answer', question_id=q_id, value=1, answer_id=a_line[a_id]) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='answer', question_id=q_id, value=2, answer_id=a_line[a_id]) }}">-</a>
+                    <a class="vote" href="{{ url_for('vote', element='answer', question_id=q_id, value=1, user_id=a_line[a_user_id], answer_id=a_line[a_id]) }}">+</a>&nbsp;<a class="vote" href="{{ url_for('vote', element='answer', question_id=q_id, value=2, user_id=a_line[a_user_id], answer_id=a_line[a_id]) }}">-</a>
                 </div>
                 <div>&nbsp;&nbsp;<small>Vote: {{ a_line[a_vote] }}</small></div>
                 {% if session.get(user_id) and session.get(user_email) -%}
                 <div class="separate">
                 <a class="add" style="margin-right: 50px" href="{{ url_for('comment_answer', question_id=q_id, answer_id=a_line[a_id]) }}">+ Add comment</a>
+                {% if a_line[a_acceptance] and question[q_user_id] == session.get(user_id) -%}
+                <a class="accept" href="{{ url_for('accept_answer', accept_sts=0, answer_id=a_line[a_id], answer_user_id=a_line[a_user_id], question_user_id=question[q_user_id], question_id=q_id) }}">&check; Remove acceptance</a>
+                {% elif not a_line[a_acceptance] and question[q_user_id] == session.get(user_id) %}
+                <a class="accept" href="{{ url_for('accept_answer', accept_sts=1, answer_id=a_line[a_id], answer_user_id=a_line[a_user_id], question_user_id=question[q_user_id], question_id=q_id) }}">&check; Accept answer</a>
+                {% endif %}
                 {% if a_line[a_image] == None -%}
                 <a class="add" href="{{ url_for('upload_file.upload_img_answer', answer_id=a_line[a_id], question_id=q_id) }}">+ Add image</a>
                 {%- endif %}
