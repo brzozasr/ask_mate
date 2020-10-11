@@ -51,13 +51,19 @@ def question_view(question_id, boolean="True"):
                            answer_count=answer_count, tags=tags)
 
 
-@app.route('/vote/<element>/<int:question_id>/<int:value>/')
-@app.route('/vote/<element>/<int:question_id>/<int:value>/<int:answer_id>')
-def vote(question_id, element, value, answer_id=None):
+@app.route('/vote/<element>/<int:question_id>/<int:value>/<int:user_id>')
+@app.route('/vote/<element>/<int:question_id>/<int:value>/<int:user_id>/<int:answer_id>')
+def vote(question_id, element, value, user_id, answer_id=None):
     elements = {'question': 'question', 'answer': 'answer', 'comment': 'comment'}
 
     if value == 2:
         value = -1
+        db.execute_sql(query.users_gain_lost_reputation, [-2, user_id])
+    elif value == 1:
+        if answer_id is None:
+            db.execute_sql(query.users_gain_lost_reputation, [5, user_id])
+        else:
+            db.execute_sql(query.users_gain_lost_reputation, [10, user_id])
 
     if element == elements['question']:
         db.execute_sql(query.question_update_vote_number_by_id, [value, question_id])
@@ -109,7 +115,8 @@ def accept_answer(accept_sts, answer_id, answer_user_id, question_user_id, quest
             db.execute_sql(query.users_gain_lost_reputation, [15, answer_user_id])
         elif accept_sts == 0:
             accept = False
-            db.execute_sql(query.users_gain_lost_reputation, [-15, answer_user_id])
+            # 15 points are deducted if the user marks the answer as not accepted
+            # db.execute_sql(query.users_gain_lost_reputation, [-15, answer_user_id])
         else:
             accept = False
         db.execute_sql(query.answer_update_acceptance_by_id, [accept, answer_id])
