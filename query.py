@@ -77,8 +77,9 @@ __query_all = {
         ORDER BY date DESC""",
     'questions_search':
         """SELECT DISTINCT q.id, q.submission_time, q.view_number, q.vote_number, q.title, q.message, q.image
-        FROM question q, answer a
-        WHERE q.title ILIKE %(search)s OR q.message ILIKE %(search)s OR (q.id = a.question_id AND a.message ILIKE %(search)s)
+        FROM question q
+        INNER JOIN answer a ON q.id = a.question_id
+        WHERE (q.title ILIKE %(search)s OR q.message ILIKE %(search)s) OR a.message ILIKE %(search)s
         ORDER BY q.submission_time DESC""",
     'tag_select':
         'SELECT id, title FROM tag ORDER BY title',
@@ -133,6 +134,18 @@ __query_all = {
         'UPDATE answer SET acceptance = %s WHERE id = %s',
     'users_gain_lost_reputation':
         'UPDATE users SET reputation = reputation + %s WHERE id = %s',
+    'tag_select_list_count_questions':
+        """SELECT t.id, t.title, COUNT(qt.tag_id)
+    FROM tag AS t
+    LEFT JOIN question_tag AS qt ON t.id = qt.tag_id
+    GROUP BY t.id
+    ORDER BY t.title""",
+    'question_select_by_tag':
+    """SELECT q.id, q.submission_time, q.view_number, q.vote_number, q.title, q.message
+    FROM question AS q
+    INNER JOIN question_tag AS qt ON qt.question_id = q.id
+    WHERE qt.tag_id = %s
+    ORDER BY q.submission_time DESC""",
 
 }
 

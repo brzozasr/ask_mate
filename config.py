@@ -23,3 +23,11 @@ SESSION_USER_EMAIL = 'user_email'
 """Commend to add and revoke privileges to a database for a user."""
 # GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO askmate; <-- askmate, it is a username
 # REVOKE ALL ON ALL TABLES IN SCHEMA public FROM askmate;
+
+
+# WORKING QUERY
+# 'questions_search':
+#         """SELECT DISTINCT q.id, q.submission_time, q.view_number, q.vote_number, q.title, q.message, q.image
+#         FROM question q, answer a
+#         WHERE q.title ILIKE %(search)s OR q.message ILIKE %(search)s OR (q.id = a.question_id AND a.message ILIKE %(search)s)
+#         ORDER BY q.submission_time DESC"""
