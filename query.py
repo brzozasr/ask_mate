@@ -77,8 +77,9 @@ __query_all = {
         ORDER BY date DESC""",
     'questions_search':
         """SELECT DISTINCT q.id, q.submission_time, q.view_number, q.vote_number, q.title, q.message, q.image
-        FROM question q, answer a
-        WHERE q.title ILIKE %(search)s OR q.message ILIKE %(search)s OR (q.id = a.question_id AND a.message ILIKE %(search)s)
+        FROM question q
+        INNER JOIN answer a ON q.id = a.question_id
+        WHERE (q.title ILIKE %(search)s OR q.message ILIKE %(search)s) OR a.message ILIKE %(search)s
         ORDER BY q.submission_time DESC""",
     'tag_select':
         'SELECT id, title FROM tag ORDER BY title',
