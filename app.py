@@ -268,6 +268,30 @@ def tag_delete(question_id, tag_id):
         return render_template('not_sign_in_page.html')
 
 
+@app.route('/tags')
+def tags_list():
+    tag_list = db.execute_sql(query.tag_select_list_count_questions)
+    qt_tag_id = request.args.get('qt_tag_id')
+    tag_title = request.args.get('tag_title')
+    if qt_tag_id is not None:
+        quest_list = db.execute_sql(query.question_select_by_tag, [qt_tag_id])
+    else:
+        quest_list = None
+
+    if tag_list and type(tag_list) == list and len(tag_list) > 0:
+        error = None
+        return render_template('tags_list.html', error=error, quest_list=quest_list,
+                               tag_list=tag_list, tag_title=tag_title)
+    else:
+        if type(tag_list) == list:
+            error = 'The tags list is empty!'
+        else:
+            error = str(tag_list)
+
+        return render_template('tags_list.html', error=error, quest_list=quest_list,
+                               tag_list=tag_list, tag_title=tag_title)
+
+
 @app.route('/sign_up', methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':

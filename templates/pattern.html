@@ -26,6 +26,9 @@
             {% if request.url_rule|string != url_for('question_list') -%}
             <a href="{{ url_for('question_list') }}">Questions' list</a>
             {%- endif %}
+            {% if request.url_rule|string != url_for('tags_list') -%}
+            <a href="{{ url_for('tags_list') }}">Tags List</a>
+            {%- endif %}
             <hr class="separator">
             {% if session.get(user_id) and session.get(user_email) -%}
                 {% if request.url_rule|string != url_for('add_question') -%}
