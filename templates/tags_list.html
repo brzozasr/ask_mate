@@ -1,0 +1,54 @@
+{% extends 'pattern.html' %}
+
+{% block title %}NOT SIGN IN PAGE{% endblock %}
+
+{% set tag_id = 0 %}
+{% set tag_name = 1 %}
+{% set tag_count = 2 %}
+{% set q_id = 0 %}
+{% set q_date = 1 %}
+{% set q_view = 2 %}
+{% set q_vote = 3 %}
+{% set q_title = 4 %}
+{% set q_message = 5 %}
+
+{% block content %}
+    <h2 class="title">Tags List</h2>
+    {% if error == None -%}
+    <br>
+    <table class="tag">
+    {% for tag in tag_list -%}
+        {% if tag[tag_count] > 0 -%}
+        <tr class="tag over" onclick="window.location='{{ url_for('tags_list', qt_tag_id=tag[tag_id], tag_title=tag[tag_name]) }}'">
+            <td class="tag col-left over">{{ tag[tag_name] }}</td>
+            <td class="tag col-right">{{ tag[tag_count] }}</td>
+        </tr>
+        {%- else %}
+        <tr class="tag">
+            <td class="tag col-left">{{ tag[tag_name] }}</td>
+            <td class="tag col-right">{{ tag[tag_count] }}</td>
+        </tr>
+        {%- endif %}
+    {%- endfor %}
+    </table>
+    {% if quest_list != None -%}
+    <br>
+    <h3 class="sub-title">Questions with tag: {{ tag_title }}</h3>
+    <table class="user-data">
+        {% for question in quest_list -%}
+        <tr class="user-data" onclick="window.location='{{ url_for('question_view', question_id=question[q_id], boolean="True") }}'">
+            <td class="user-data">
+                <small><strong>Posted date:</strong> {{ (question[q_date]|string)[:19] }}</small><br>
+                <strong>Title:</strong> {{ question[q_title] }}<br>
+                <strong>Question:</strong><br>
+                {{ question[q_message] }}<br>
+                <small><strong>Viewed:</strong> {{ question[q_view] }}, <strong>Voted:</strong> {{ question[q_vote] }}</small>
+            </td>
+        </tr>
+        {%- endfor %}
+    </table>
+    {% endif %}
+    {%- else %}
+    <br><p class="error center">{{ error }}</p><br>
+    {%- endif %}
+{% endblock %}
